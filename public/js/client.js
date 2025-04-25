@@ -6337,22 +6337,22 @@ function shareRoomMeetingURL(checkScreen = false) {
     Swal.fire({
         background: swBg,
         position: 'center',
-        title: 'Share the room',
+        title: '分享会议室',
         html: `
         <div id="qrRoomContainer">
             <canvas id="qrRoom"></canvas>
         </div>
         <br/>
-        <p style="color:rgb(8, 189, 89);">Join from your mobile device</p>
-        <p style="background:transparent; color:white; font-family: Arial, Helvetica, sans-serif;">No need for apps, simply capture the QR code with your mobile camera Or Invite someone else to join by sending them the following URL</p>
+        <p style="color:rgb(8, 189, 89);">从移动设备加入</p>
+        <p style="background:transparent; color:white; font-family: Arial, Helvetica, sans-serif;">无需应用，只需用移动设备摄像头扫描二维码 或 邀请其他人加入，将以下 URL 发送给他们</p>
         <p style="color:rgb(8, 189, 89);">${roomURL}</p>`,
         showDenyButton: true,
         showCancelButton: true,
         cancelButtonColor: 'red',
         denyButtonColor: 'green',
-        confirmButtonText: `Copy URL`,
-        denyButtonText: `Email invite`,
-        cancelButtonText: `Close`,
+        confirmButtonText: `复制 URL`,
+        denyButtonText: `发送电子邮件邀请`,
+        cancelButtonText: `关闭`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
