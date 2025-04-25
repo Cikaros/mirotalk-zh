@@ -3128,19 +3128,19 @@ async function loadLocalMedia(stream, kind) {
 
             // no mobile devices
             if (!isMobileDevice) {
-                setTippy(mySessionTime, 'Session Time', 'bottom');
-                setTippy(myPeerName, 'My name', 'bottom');
-                setTippy(myHandStatusIcon, 'My hand is raised', 'bottom');
-                setTippy(myPrivacyBtn, 'Toggle video privacy', 'bottom');
-                setTippy(myVideoStatusIcon, 'My video is on', 'bottom');
-                setTippy(myAudioStatusIcon, 'My audio is on', 'bottom');
-                setTippy(myVideoToImgBtn, 'Take a snapshot', 'bottom');
-                setTippy(myVideoFullScreenBtn, 'Full screen mode', 'bottom');
-                setTippy(myVideoPiPBtn, 'Toggle picture in picture', 'bottom');
-                setTippy(myVideoZoomInBtn, 'Zoom in video', 'bottom');
-                setTippy(myVideoZoomOutBtn, 'Zoom out video', 'bottom');
-                setTippy(myVideoPinBtn, 'Toggle Pin video', 'bottom');
-                setTippy(myVideoMirrorBtn, 'Toggle video mirror', 'bottom');
+                setTippy(mySessionTime, '会话时间', 'bottom');
+                setTippy(myPeerName, '我的名字', 'bottom');
+                setTippy(myHandStatusIcon, '我举手了', 'bottom');
+                setTippy(myPrivacyBtn, '切换视频隐私', 'bottom');
+                setTippy(myVideoStatusIcon, '我的视频已开启', 'bottom');
+                setTippy(myAudioStatusIcon, '我的音频已开启', 'bottom');
+                setTippy(myVideoToImgBtn, '拍摄快照', 'bottom');
+                setTippy(myVideoFullScreenBtn, '全屏模式', 'bottom');
+                setTippy(myVideoPiPBtn, '切换画中画', 'bottom');
+                setTippy(myVideoZoomInBtn, '放大视频', 'bottom');
+                setTippy(myVideoZoomOutBtn, '缩小视频', 'bottom');
+                setTippy(myVideoPinBtn, '切换固定视频', 'bottom');
+                setTippy(myVideoMirrorBtn, '切换视频镜像', 'bottom');
             }
 
             // my video avatar image
@@ -3235,7 +3235,7 @@ async function loadLocalMedia(stream, kind) {
                 myVideoStatusIcon.className = className.videoOff;
                 videoBtn.className = className.videoOff;
                 if (!isMobileDevice) {
-                    setTippy(myVideoStatusIcon, 'My video is disabled', 'bottom');
+                    setTippy(myVideoStatusIcon, '我的视频已禁用', 'bottom');
                 }
             }
 
@@ -3243,7 +3243,7 @@ async function loadLocalMedia(stream, kind) {
                 myAudioStatusIcon.className = className.audioOff;
                 audioBtn.className = className.audioOff;
                 if (!isMobileDevice) {
-                    setTippy(myAudioStatusIcon, 'My audio is disabled', 'bottom');
+                    setTippy(myAudioStatusIcon, '我的音频已禁用', 'bottom');
                 }
             }
             break;
@@ -3432,23 +3432,23 @@ async function loadRemoteMediaStream(stream, peers, peer_id, kind) {
 
             // no mobile devices
             if (!isMobileDevice) {
-                setTippy(remotePeerName, 'Participant name', 'bottom');
-                setTippy(remoteHandStatusIcon, 'Participant hand is raised', 'bottom');
-                setTippy(remoteVideoStatusIcon, 'Participant video is on', 'bottom');
-                setTippy(remoteAudioStatusIcon, 'Participant audio is on', 'bottom');
-                setTippy(remoteAudioVolume, '🔊 Volume', 'top');
-                setTippy(remoteVideoAudioUrlBtn, 'Send Video or Audio', 'bottom');
-                setTippy(remotePrivateMsgBtn, 'Send private message', 'bottom');
-                setTippy(remoteFileShareBtn, 'Send file', 'bottom');
-                setTippy(remoteVideoToImgBtn, 'Take a snapshot', 'bottom');
-                setTippy(remotePeerKickOut, 'Kick out', 'bottom');
-                setTippy(remoteVideoFullScreenBtn, 'Full screen mode', 'bottom');
-                setTippy(remoteVideoZoomInBtn, 'Zoom in video', 'bottom');
-                setTippy(remoteVideoZoomOutBtn, 'Zoom out video', 'bottom');
-                setTippy(remoteVideoPiPBtn, 'Toggle picture in picture', 'bottom');
-                setTippy(remoteVideoPinBtn, 'Toggle Pin video', 'bottom');
-                setTippy(remoteVideoFocusBtn, 'Toggle Focus mode', 'bottom');
-                setTippy(remoteVideoMirrorBtn, 'Toggle video mirror', 'bottom');
+                setTippy(remotePeerName, '参与者名字', 'bottom');
+                setTippy(remoteHandStatusIcon, '参与者举手了', 'bottom');
+                setTippy(remoteVideoStatusIcon, '参与者视频已开启', 'bottom');
+                setTippy(remoteAudioStatusIcon, '参与者音频已开启', 'bottom');
+                setTippy(remoteAudioVolume, '🔊 音量', 'top');
+                setTippy(remoteVideoAudioUrlBtn, '发送视频或音频', 'bottom');
+                setTippy(remotePrivateMsgBtn, '发送私信', 'bottom');
+                setTippy(remoteFileShareBtn, '发送文件', 'bottom');
+                setTippy(remoteVideoToImgBtn, '拍摄快照', 'bottom');
+                setTippy(remotePeerKickOut, '踢出', 'bottom');
+                setTippy(remoteVideoFullScreenBtn, '全屏模式', 'bottom');
+                setTippy(remoteVideoZoomInBtn, '放大视频', 'bottom');
+                setTippy(remoteVideoZoomOutBtn, '缩小视频', 'bottom');
+                setTippy(remoteVideoPiPBtn, '切换画中画', 'bottom');
+                setTippy(remoteVideoPinBtn, '切换固定视频', 'bottom');
+                setTippy(remoteVideoFocusBtn, '切换焦点模式', 'bottom');
+                setTippy(remoteVideoMirrorBtn, '切换视频镜像', 'bottom');
             }
 
             // my video avatar image
@@ -4687,7 +4687,7 @@ function setFullScreenBtn() {
             if (!fullscreenElement) {
                 fullScreenBtn.className = className.fsOff;
                 isDocumentOnFullScreen = false;
-                setTippy(fullScreenBtn, 'View full screen', placement);
+                setTippy(fullScreenBtn, '全屏查看', placement);
             }
         });
         fullScreenBtn.addEventListener('click', (e) => {
@@ -6479,7 +6479,7 @@ function handleAudio(e, init, force = null) {
 
     if (init) {
         initAudioBtn.className = audioClassName;
-        setTippy(initAudioBtn, audioStatus ? 'Stop the audio' : 'Start the audio', 'right');
+        setTippy(initAudioBtn, audioStatus ? '停止音频' : '开始音频', 'right');
         initMicrophoneSelect.disabled = !audioStatus;
         initSpeakerSelect.disabled = !audioStatus;
         lS.setInitConfig(lS.MEDIA_TYPE.audio, audioStatus);
@@ -6522,7 +6522,7 @@ async function handleVideo(e, init, force = null) {
 
     if (init) {
         initVideoBtn.className = videoClassName;
-        setTippy(initVideoBtn, videoStatus ? 'Stop the video' : 'Start the video', 'top');
+        setTippy(initVideoBtn, videoStatus ? '停止视频' : '开始视频', 'top');
         videoStatus ? elemDisplay(initVideo, true, 'block') : elemDisplay(initVideo, false);
         initVideoSelect.disabled = !videoStatus;
         lS.setInitConfig(lS.MEDIA_TYPE.video, videoStatus);
@@ -6784,7 +6784,8 @@ function setScreenSharingStatus(status) {
     }
     initScreenShareBtn.className = status ? className.screenOff : className.screenOn;
     screenShareBtn.className = status ? className.screenOff : className.screenOn;
-    setTippy(screenShareBtn, status ? 'Stop screen sharing' : 'Start screen sharing', placement);
+    setTippy(screenShareBtn, status ? '停止屏幕共享' : '开始屏幕共享', placement);
+
 }
 
 /**
@@ -6800,8 +6801,8 @@ async function setMyVideoStatusTrue() {
     myVideoStatusIcon.className = className.videoOn;
     elemDisplay(myVideoAvatarImage, false);
     elemDisplay(myVideo, true, 'block');
-    setTippy(videoBtn, 'Stop the video', placement);
-    setTippy(initVideoBtn, 'Stop the video', 'top');
+    setTippy(videoBtn, '停止视频', placement);
+    setTippy(initVideoBtn, '停止视频', 'top');
     emitPeerStatus('video', myVideoStatus);
 }
 
@@ -6821,7 +6822,7 @@ function toggleFullScreen() {
             isDocumentOnFullScreen = false;
         }
     }
-    setTippy(fullScreenBtn, isDocumentOnFullScreen ? 'Exit full screen' : 'View full screen', placement);
+    setTippy(fullScreenBtn, isDocumentOnFullScreen ? '退出全屏' : '全屏查看', placement);
 }
 
 /**
@@ -7303,7 +7304,7 @@ function handleMediaRecorderStart(event) {
     console.log('MediaRecorder started: ', event);
     isStreamRecording = true;
     recordStreamBtn.style.setProperty('color', '#ff4500');
-    setTippy(recordStreamBtn, 'Stop recording', placement);
+    setTippy(recordStreamBtn, '停止录制', placement);
     if (isMobileDevice) elemDisplay(swapCameraBtn, false);
     playSound('recStart');
 }
@@ -7337,7 +7338,7 @@ function handleMediaRecorderStop(event) {
     }
     recordStreamBtn.style.setProperty('color', '#ffffff');
     downloadRecordedStream();
-    setTippy(recordStreamBtn, 'Start recording', placement);
+    setTippy(recordStreamBtn, '开始录制', placement);
     if (isMobileDevice) elemDisplay(swapCameraBtn, true, 'block');
     playSound('recStop');
 }
@@ -7486,7 +7487,7 @@ function showChatRoomDraggable() {
         toggleChatPin();
     }
 
-    setTippy(chatRoomBtn, 'Close the chat', bottomButtonsPlacement);
+    setTippy(chatRoomBtn, '关闭聊天', bottomButtonsPlacement);
 }
 
 /**
@@ -7508,7 +7509,7 @@ function showCaptionDraggable() {
         toggleCaptionPin();
     }
 
-    setTippy(captionBtn, 'Close the caption', placement);
+    setTippy(captionBtn, '关闭字幕', placement);
 }
 
 /**
@@ -7832,7 +7833,7 @@ function hideChatRoomAndEmojiPicker() {
     chatRoomBtn.className = className.chatOn;
     isChatRoomVisible = false;
     isChatEmojiVisible = false;
-    setTippy(chatRoomBtn, 'Open the chat', bottomButtonsPlacement);
+    setTippy(chatRoomBtn, '打开聊天', bottomButtonsPlacement);
 }
 
 /**
@@ -7845,7 +7846,7 @@ function hideCaptionBox() {
     elemDisplay(captionDraggable, false);
     captionBtn.className = className.captionOn;
     isCaptionBoxVisible = false;
-    setTippy(captionBtn, 'Open the caption', placement);
+    setTippy(captionBtn, '打开字幕', placement);
 }
 
 /**
@@ -8111,11 +8112,11 @@ function appendMessage(from, img, side, msg, privateMsg, msgId = null, to = '') 
 
     msgerChat.scrollTop += 500;
     if (!isMobileDevice) {
-        setTippy(getId('msg-delete-' + chatMessagesId), 'Delete', 'top');
-        setTippy(getId('msg-copy-' + chatMessagesId), 'Copy', 'top');
-        setTippy(getId('msg-speech-' + chatMessagesId), 'Speech', 'top');
+        setTippy(getId('msg-delete-' + chatMessagesId), '删除', 'top');
+        setTippy(getId('msg-copy-' + chatMessagesId), '复制', 'top');
+        setTippy(getId('msg-speech-' + chatMessagesId), '语音', 'top');
         if (isValidPrivateMessage) {
-            setTippy(getId('msg-private-reply-' + chatMessagesId), 'Reply to ' + getTo, 'top');
+            setTippy(getId('msg-private-reply-' + chatMessagesId), '回复给 ' + getTo, 'top');
         }
     }
     chatMessagesId++;
@@ -8703,13 +8704,13 @@ function hideShowMySettings() {
         mySettings.style.top = '50%';
         mySettings.style.left = '50%';
         elemDisplay(mySettings, true, 'block');
-        setTippy(mySettingsBtn, 'Close the settings', bottomButtonsPlacement);
+        setTippy(mySettingsBtn, '关闭设置', bottomButtonsPlacement);
         isMySettingsVisible = true;
         videoMediaContainer.style.opacity = 0.3;
         return;
     }
     elemDisplay(mySettings, false);
-    setTippy(mySettingsBtn, 'Open the settings', bottomButtonsPlacement);
+    setTippy(mySettingsBtn, '打开设置', bottomButtonsPlacement);
     isMySettingsVisible = false;
     videoMediaContainer.style.opacity = 1;
 }
@@ -8851,13 +8852,13 @@ function setMyHandStatus() {
         // Raise hand
         setColor(myHandBtn, 'green');
         elemDisplay(myHandStatusIcon, true);
-        setTippy(myHandBtn, 'Raise your hand', bottomButtonsPlacement);
+        setTippy(myHandBtn, '举手', bottomButtonsPlacement);
         playSound('raiseHand');
     } else {
         // Lower hand
         setColor(myHandBtn, 'var(--btn-bar-bg-color)');
         elemDisplay(myHandStatusIcon, false);
-        setTippy(myHandBtn, 'Lower your hand', bottomButtonsPlacement);
+        setTippy(myHandBtn, '放下手', bottomButtonsPlacement);
     }
     emitPeerStatus('hand', myHandStatus);
 }
@@ -8873,8 +8874,8 @@ function setMyAudioStatus(status) {
     myAudioStatusIcon.className = audioClassName;
     // send my audio status to all peers in the room
     emitPeerStatus('audio', status);
-    setTippy(myAudioStatusIcon, status ? 'My audio is on' : 'My audio is off', 'bottom');
-    setTippy(audioBtn, status ? 'Stop the audio' : 'Start the audio', bottomButtonsPlacement);
+    setTippy(myAudioStatusIcon, status ? '我的音频已开启' : '我的音频已关闭', 'bottom');
+    setTippy(audioBtn, status ? '停止音频' : '开始音频', bottomButtonsPlacement);
     status ? playSound('on') : playSound('off');
 }
 
@@ -8897,8 +8898,8 @@ function setMyVideoStatus(status) {
     emitPeerStatus('video', status);
 
     if (!isMobileDevice) {
-        if (myVideoStatusIcon) setTippy(myVideoStatusIcon, status ? 'My video is on' : 'My video is off', 'bottom');
-        setTippy(videoBtn, status ? 'Stop the video' : 'Start the video', bottomButtonsPlacement);
+        if (myVideoStatusIcon) setTippy(myVideoStatusIcon, status ? '我的视频已开启' : '我的视频已关闭', 'bottom');
+        setTippy(videoBtn, status ? '停止视频' : '开始视频', bottomButtonsPlacement);
     }
 
     if (status) {
@@ -8965,7 +8966,7 @@ function setPeerAudioStatus(peer_id, status) {
     const peerAudioVolume = getId(peer_id + '_audioVolume');
     if (peerAudioStatus) {
         peerAudioStatus.className = status ? className.audioOn : className.audioOff;
-        setTippy(peerAudioStatus, status ? 'Participant audio is on' : 'Participant audio is off', 'bottom');
+        setTippy(peerAudioStatus, status ? '参与者音频已开启' : '参与者音频已关闭', 'bottom');
         status ? playSound('on') : playSound('off');
     }
     if (peerAudioVolume) {
@@ -9106,7 +9107,7 @@ function setPeerVideoStatus(peer_id, status) {
         if (peerVideoAvatarImage) elemDisplay(peerVideoAvatarImage, false);
         if (peerVideoStatus) {
             peerVideoStatus.className = className.videoOn;
-            setTippy(peerVideoStatus, 'Participant video is on', 'bottom');
+            setTippy(peerVideoStatus, '参与者视频已开启', 'bottom');
             playSound('on');
         }
     } else {
@@ -9114,7 +9115,7 @@ function setPeerVideoStatus(peer_id, status) {
         if (peerVideoAvatarImage) elemDisplay(peerVideoAvatarImage, true, 'block');
         if (peerVideoStatus) {
             peerVideoStatus.className = className.videoOff;
-            setTippy(peerVideoStatus, 'Participant video is off', 'bottom');
+            setTippy(peerVideoStatus, '参与者视频已关闭', 'bottom');
             playSound('off');
         }
     }
@@ -9303,7 +9304,7 @@ function handleScreenStart(peer_id) {
     const remoteVideoStream = getId(peer_id + '___video');
     if (remoteVideoStatusBtn) {
         remoteVideoStatusBtn.className = className.videoOn;
-        setTippy(remoteVideoStatusBtn, 'Participant screen share is on', 'bottom');
+        setTippy(remoteVideoStatusBtn, '参与者屏幕共享已开启', 'bottom');
     }
     if (remoteVideoStream) {
         getId(peer_id + '_pinUnpin').click();
@@ -9324,7 +9325,7 @@ function handleScreenStop(peer_id, peer_use_video) {
     const remoteVideoStatusBtn = getId(peer_id + '_videoStatus');
     if (remoteVideoStatusBtn) {
         remoteVideoStatusBtn.className = className.videoOff;
-        setTippy(remoteVideoStatusBtn, 'Participant screen share is off', 'bottom');
+        setTippy(remoteVideoStatusBtn, '参与者屏幕共享已关闭', 'bottom');
     }
     if (remoteVideoStream) {
         if (isVideoPinned) getId(peer_id + '_pinUnpin').click();
@@ -9673,9 +9674,9 @@ function toggleLockUnlockWhiteboard() {
 function toggleWhiteboard() {
     if (!wbIsOpen) {
         playSound('newMessage');
-        setTippy(whiteboardBtn, 'Close the Whiteboard', placement);
+        setTippy(whiteboardBtn, '关闭白板', placement);
     } else {
-        setTippy(whiteboardBtn, 'Open the Whiteboard', placement);
+        setTippy(whiteboardBtn, '打开白板', placement);
     }
 
     whiteboard.classList.toggle('show');
