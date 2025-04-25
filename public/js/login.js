@@ -62,20 +62,20 @@ function login() {
             })
             .catch(function (error) {
                 console.error(error);
-                popup('warning', 'Invalid credentials. Please try again.');
+                popup('warning', '无效的凭证。请重试。');
             });
         return;
     }
     if (!username && !password) {
-        popup('warning', 'Username and Password required');
+        popup('warning', '需要用户名和密码');
         return;
     }
     if (!username) {
-        popup('warning', 'Username required');
+        popup('warning', '需要用户名');
         return;
     }
     if (!password) {
-        popup('warning', 'Password required');
+        popup('warning', '需要密码');
         return;
     }
 }

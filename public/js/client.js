@@ -715,93 +715,93 @@ function setButtonsToolTip() {
     // Not need for mobile
     if (isMobileDevice) return;
     // Init buttons
-    setTippy(initScreenShareBtn, 'Toggle screen sharing', 'top');
-    setTippy(initVideoMirrorBtn, 'Toggle video mirror', 'top');
-    setTippy(initUsernameEmojiButton, 'Toggle username emoji', 'top');
+    setTippy(initScreenShareBtn, '切换屏幕共享', 'top');
+    setTippy(initVideoMirrorBtn, '切换视频镜像', 'top');
+    setTippy(initUsernameEmojiButton, '切换用户名表情符号', 'top');
     // Main buttons
     refreshMainButtonsToolTipPlacement();
     // Chat room buttons
-    setTippy(msgerClose, 'Close', 'bottom');
-    setTippy(msgerShowChatOnMsgDiv, 'Show chat when you receive a new message', 'bottom');
-    setTippy(msgerSpeechMsgDiv, 'Speech the incoming messages', 'bottom');
-    setTippy(msgerTogglePin, 'Toggle chat pin', 'bottom');
-    setTippy(msgerTheme, 'Ghost theme', 'bottom');
-    setTippy(msgerMaxBtn, 'Maximize', 'bottom');
-    setTippy(msgerMinBtn, 'Minimize', 'bottom');
-    setTippy(msgerEmojiBtn, 'Emoji', 'top');
+    setTippy(msgerClose, '关闭', 'bottom');
+    setTippy(msgerShowChatOnMsgDiv, '接收新消息时显示聊天', 'bottom');
+    setTippy(msgerSpeechMsgDiv, '朗读收到的消息', 'bottom');
+    setTippy(msgerTogglePin, '切换聊天固定', 'bottom');
+    setTippy(msgerTheme, '鬼魂主题', 'bottom');
+    setTippy(msgerMaxBtn, '最大化', 'bottom');
+    setTippy(msgerMinBtn, '最小化', 'bottom');
+    setTippy(msgerEmojiBtn, '表情符号', 'top');
     setTippy(msgerMarkdownBtn, 'Markdown', 'top');
     setTippy(msgerGPTBtn, 'ChatGPT', 'top');
-    setTippy(msgerShareFileBtn, 'Share file', 'top');
-    setTippy(msgerCPBtn, 'Private messages', 'top');
-    setTippy(msgerCleanTextBtn, 'Clean', 'top');
-    setTippy(msgerPasteBtn, 'Paste', 'top');
-    setTippy(msgerSendBtn, 'Send', 'top');
+    setTippy(msgerShareFileBtn, '分享文件', 'top');
+    setTippy(msgerCPBtn, '私信', 'top');
+    setTippy(msgerCleanTextBtn, '清除', 'top');
+    setTippy(msgerPasteBtn, '粘贴', 'top');
+    setTippy(msgerSendBtn, '发送', 'top');
     // Chat participants buttons
-    setTippy(msgerCPCloseBtn, 'Close', 'bottom');
+    setTippy(msgerCPCloseBtn, '关闭', 'bottom');
     // Caption buttons
-    setTippy(captionClose, 'Close', 'bottom');
-    setTippy(captionMaxBtn, 'Maximize', 'bottom');
-    setTippy(captionMinBtn, 'Minimize', 'bottom');
-    setTippy(captionTogglePin, 'Toggle caption pin', 'bottom');
-    setTippy(captionTheme, 'Ghost theme', 'bottom');
-    setTippy(captionClean, 'Clean the messages', 'bottom');
-    setTippy(captionSaveBtn, 'Save the messages', 'bottom');
-    setTippy(speechRecognitionIcon, 'Status', 'bottom');
-    setTippy(speechRecognitionStart, 'Start', 'top');
-    setTippy(speechRecognitionStop, 'Stop', 'top');
+    setTippy(captionClose, '关闭', 'bottom');
+    setTippy(captionMaxBtn, '最大化', 'bottom');
+    setTippy(captionMinBtn, '最小化', 'bottom');
+    setTippy(captionTogglePin, '切换标题固定', 'bottom');
+    setTippy(captionTheme, '鬼魂主题', 'bottom');
+    setTippy(captionClean, '清除消息', 'bottom');
+    setTippy(captionSaveBtn, '保存消息', 'bottom');
+    setTippy(speechRecognitionIcon, '状态', 'bottom');
+    setTippy(speechRecognitionStart, '开始', 'top');
+    setTippy(speechRecognitionStop, '停止', 'top');
     // Settings
-    setTippy(mySettingsCloseBtn, 'Close', 'bottom');
-    setTippy(myPeerNameSetBtn, 'Change name', 'top');
-    setTippy(myRoomId, 'Room name (click to copy/share)', 'right');
+    setTippy(mySettingsCloseBtn, '关闭', 'bottom');
+    setTippy(myPeerNameSetBtn, '更改名称', 'top');
+    setTippy(myRoomId, '房间名称（点击复制/分享）', 'right');
     setTippy(
         switchPushToTalk,
-        'If Active, When SpaceBar keydown the microphone will be activated, on keyup will be deactivated, like a walkie-talkie',
+        '如果激活，按下空格键时麦克风将被激活，释放空格键时将被停用，就像对讲机一样',
         'right',
     );
-    setTippy(switchSounds, 'Toggle room notify sounds', 'right');
-    setTippy(switchShare, "Show 'Share Room' popup on join.", 'right');
-    setTippy(switchKeepButtonsVisible, 'Keep buttons always visible', 'right');
-    setTippy(recImage, 'Toggle recording', 'right');
+    setTippy(switchSounds, '切换房间通知声音', 'right');
+    setTippy(switchShare, "加入时显示 '分享房间' 弹出框", 'right');
+    setTippy(switchKeepButtonsVisible, '保持按钮始终可见', 'right');
+    setTippy(recImage, '切换录音', 'right');
     setTippy(
         switchH264Recording,
-        'Prioritize h.264 with AAC or h.264 with Opus codecs over VP8 with Opus or VP9 with Opus codecs',
+        '优先使用 h.264 with AAC 或 h.264 with Opus 编解码器而不是 VP8 with Opus 或 VP9 with Opus 编解码器',
         'right',
     );
-    setTippy(networkIP, 'IP address associated with the ICE candidate', 'right');
+    setTippy(networkIP, '与 ICE 候选相关联的 IP 地址', 'right');
     setTippy(
         networkHost,
-        'This type of ICE candidate represents a candidate that corresponds to an interface on the local device. Host candidates are typically generated based on the local IP addresses of the device and can be used for direct peer-to-peer communication within the same network',
+        '这种类型的 ICE 候选表示本地设备上的一个接口。主机候选通常基于设备的本地 IP 地址生成，并可用于同一网络内的直接点对点通信',
         'right',
     );
     setTippy(
         networkStun,
-        'Server reflexive candidates are obtained by the ICE agent when it sends a request to a STUN (Session Traversal Utilities for NAT) server. These candidates reflect the public IP address and port of the client as observed by the STUN server. They are useful for traversing NATs (Network Address Translators) and establishing connectivity between peers across different networks',
+        '当 ICE 代理向 STUN（网络地址转换实用程序）服务器发送请求时，会获取服务器反射候选。这些候选反映了客户端在 STUN 服务器看来的公共 IP 地址和端口。它们对于穿越 NAT（网络地址转换器）并在不同网络的对等之间建立连接非常有用',
         'right',
     );
     setTippy(
         networkTurn,
-        'Relay candidates are obtained when communication between peers cannot be established directly due to symmetric NATs or firewall restrictions. In such cases, communication is relayed through a TURN (Traversal Using Relays around NAT) server. TURN servers act as intermediaries, relaying data between peers, allowing them to communicate even when direct connections are not possible. This is typically the fallback mechanism for establishing connectivity when direct peer-to-peer communication fails',
+        '当对等之间的通信由于对称 NAT 或防火墙限制而无法直接建立时，会获取中继候选。在这种情况下，通过 TURN（使用 NAT 中继的遍历）服务器进行通信。TURN 服务器充当中介，通过它们将数据在对等之间中继，使它们即使在无法建立直接连接时也能进行通信。这通常是当直接对等通信失败时建立连接的回退机制',
         'right',
     );
     // Whiteboard buttons
-    setTippy(whiteboardLockBtn, 'Toggle Lock whiteboard', 'right');
-    setTippy(whiteboardUnlockBtn, 'Toggle Lock whiteboard', 'right');
-    setTippy(whiteboardCloseBtn, 'Close', 'right');
-    setTippy(wbDrawingColorEl, 'Drawing color', 'bottom');
-    setTippy(whiteboardGhostButton, 'Toggle transparent background', 'bottom');
-    setTippy(wbBackgroundColorEl, 'Background color', 'bottom');
-    setTippy(whiteboardPencilBtn, 'Drawing mode', 'bottom');
-    setTippy(whiteboardObjectBtn, 'Object mode', 'bottom');
-    setTippy(whiteboardUndoBtn, 'Undo', 'bottom');
-    setTippy(whiteboardRedoBtn, 'Redo', 'bottom');
+    setTippy(whiteboardLockBtn, '切换锁定白板', 'right');
+    setTippy(whiteboardUnlockBtn, '切换锁定白板', 'right');
+    setTippy(whiteboardCloseBtn, '关闭', 'right');
+    setTippy(wbDrawingColorEl, '绘制颜色', 'bottom');
+    setTippy(whiteboardGhostButton, '切换透明背景', 'bottom');
+    setTippy(wbBackgroundColorEl, '背景颜色', 'bottom');
+    setTippy(whiteboardPencilBtn, '绘制模式', 'bottom');
+    setTippy(whiteboardObjectBtn, '对象模式', 'bottom');
+    setTippy(whiteboardUndoBtn, '撤销', 'bottom');
+    setTippy(whiteboardRedoBtn, '重做', 'bottom');
     // Suspend/Hide File transfer buttons
-    setTippy(sendAbortBtn, 'Abort file transfer', 'bottom');
-    setTippy(receiveAbortBtn, 'Abort file transfer', 'bottom');
-    setTippy(receiveHideBtn, 'Hide file transfer', 'bottom');
+    setTippy(videoUrlCloseBtn, '关闭视频播放器', 'bottom');
+    setTippy(videoAudioCloseBtn, '关闭视频播放器', 'bottom');
+    setTippy(msgerVideoUrlBtn, '与所有参与者分享视频或音频', 'top');
     // Video/audio URL player
-    setTippy(videoUrlCloseBtn, 'Close the video player', 'bottom');
-    setTippy(videoAudioCloseBtn, 'Close the video player', 'bottom');
-    setTippy(msgerVideoUrlBtn, 'Share a video or audio to all participants', 'top');
+    setTippy(videoUrlCloseBtn, '关闭视频播放器', 'bottom');
+    setTippy(videoAudioCloseBtn, '关闭视频播放器', 'bottom');
+    setTippy(msgerVideoUrlBtn, '与所有参与者分享视频或音频', 'top');
 }
 
 /**
@@ -818,26 +818,27 @@ function refreshMainButtonsToolTipPlacement() {
     // BottomButtons
     bottomButtonsPlacement = btnsBarSelect.options[btnsBarSelect.selectedIndex].value == 'vertical' ? 'top' : 'right';
 
-    setTippy(shareRoomBtn, 'Share the Room', placement);
-    setTippy(hideMeBtn, 'Toggle hide myself from the room view', placement);
-    setTippy(recordStreamBtn, 'Start recording', placement);
-    setTippy(fullScreenBtn, 'View full screen', placement);
-    setTippy(captionBtn, 'Open the caption', placement);
-    setTippy(roomEmojiPickerBtn, 'Send reaction', placement);
-    setTippy(whiteboardBtn, 'Open the whiteboard', placement);
-    setTippy(snapshotRoomBtn, 'Snapshot screen, windows or tab', placement);
-    setTippy(fileShareBtn, 'Share file', placement);
-    setTippy(documentPiPBtn, 'Toggle Document picture in picture', placement);
-    setTippy(aboutBtn, 'About this project', placement);
+    setTippy(shareRoomBtn, '分享房间', placement);
+    setTippy(hideMeBtn, '切换在房间视图中隐藏自己', placement);
+    setTippy(recordStreamBtn, '开始录制', placement);
+    setTippy(fullScreenBtn, '全屏查看', placement);
+    setTippy(captionBtn, '打开字幕', placement);
+    setTippy(roomEmojiPickerBtn, '发送反应', placement);
+    setTippy(whiteboardBtn, '打开白板', placement);
+    setTippy(snapshotRoomBtn, '屏幕快照，窗口或标签页', placement);
+    setTippy(fileShareBtn, '分享文件', placement);
+    setTippy(documentPiPBtn, '切换文档画中画', placement);
+    setTippy(aboutBtn, '关于此项目', placement);
 
-    setTippy(toggleExtraBtn, 'Toggle extra buttons', bottomButtonsPlacement);
-    setTippy(audioBtn, useAudio ? 'Stop the audio' : 'My audio is disabled', bottomButtonsPlacement);
-    setTippy(videoBtn, useVideo ? 'Stop the video' : 'My video is disabled', bottomButtonsPlacement);
-    setTippy(screenShareBtn, 'Start screen sharing', bottomButtonsPlacement);
-    setTippy(myHandBtn, 'Raise your hand', bottomButtonsPlacement);
-    setTippy(chatRoomBtn, 'Open the chat', bottomButtonsPlacement);
-    setTippy(mySettingsBtn, 'Open the settings', bottomButtonsPlacement);
-    setTippy(leaveRoomBtn, 'Leave this room', bottomButtonsPlacement);
+    setTippy(toggleExtraBtn, '切换额外按钮', bottomButtonsPlacement);
+    setTippy(audioBtn, useAudio ? '停止音频' : '我的音频已禁用', bottomButtonsPlacement);
+    setTippy(videoBtn, useVideo ? '停止视频' : '我的视频已禁用', bottomButtonsPlacement);
+    setTippy(screenShareBtn, '开始屏幕共享', bottomButtonsPlacement);
+    setTippy(myHandBtn, '举手', bottomButtonsPlacement);
+    setTippy(chatRoomBtn, '打开聊天', bottomButtonsPlacement);
+    setTippy(mySettingsBtn, '打开设置', bottomButtonsPlacement);
+    setTippy(leaveRoomBtn, '离开此房间', bottomButtonsPlacement);
+
 }
 
 /**
@@ -1584,8 +1585,8 @@ async function whoAreYou() {
         setMyAudioStatus(useAudio);
     }
 
-    setTippy(initAudioBtn, 'Stop the audio', 'top');
-    setTippy(initVideoBtn, 'Stop the video', 'top');
+    setTippy(initAudioBtn, '停止音频', 'top');
+    setTippy(initVideoBtn, '停止视频', 'top');
 }
 
 /**

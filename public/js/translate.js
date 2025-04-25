@@ -20,14 +20,14 @@ function loadScript(src) {
 function googleTranslateElementInit() {
     new google.translate.TranslateElement(
         {
-            pageLanguage: 'en',
+            pageLanguage: 'zh',
             autoDisplay: false, // Prevent default popup
         },
         'google_translate_element',
     );
 
-    const language = brand?.app?.language || 'en';
-    if (language === 'en') return; // No need to switch if default is 'en'
+    const language = brand?.app?.language || 'zh';
+    if (language === 'zh') return; // No need to switch if default is 'en'
 
     // Use MutationObserver to detect the dropdown
     const observer = new MutationObserver(() => {

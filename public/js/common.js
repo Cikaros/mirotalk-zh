@@ -224,11 +224,11 @@ function joinRoom() {
     const roomValid = isValidRoomName(roomName);
 
     if (!roomName) {
-        popup('warning', 'Room name empty!\nPlease pick a room name.');
+        popup('warning', '房间名称为空！\n请选择一个房间名称。');
         return;
     }
     if (!roomValid) {
-        popup('warning', 'Invalid Room name!\nPath traversal pattern detected!');
+        popup('warning', '无效的房间名称！\n检测到路径遍历模式！');
         return;
     }
 
@@ -247,7 +247,7 @@ function isValidRoomName(input) {
 function adultContent() {
     if (
         confirm(
-            '18+ WARNING! ADULTS ONLY!\n\nExplicit material for viewing by adults 18 years of age or older. You must be at least 18 years old to access to this site!\n\nProceeding you are agree and confirm to have 18+ year.',
+            '18岁及以上警告！仅限成人观看！\n\n此内容包含适合18岁以上成年人的明确材料。您必须年满18岁才能访问此网站！\n\n继续浏览即表示您同意并确认您已满18岁。',
         )
     ) {
         window.open('https://luvlounge.ca', '_blank');

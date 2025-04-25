@@ -38,33 +38,33 @@ const footer = document.getElementById('footer');
 
 let brand = {
     app: {
-        language: 'en',
+        language: 'zh',
         name: 'MiroTalk',
-        title: 'MiroTalk<br />Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
+        title: 'MiroTalk<br />免费基于浏览器的实时视频通话。<br />简单、安全、快速。',
         description:
-            'Start your next video call with a single click. No download, plug-in, or login is required. Just get straight to talking, messaging, and sharing your screen.',
-        joinDescription: 'Pick a room name.<br />How about this one?',
-        joinButtonLabel: 'JOIN ROOM',
-        joinLastLabel: 'Your recent room:',
+            '只需点击一下即可开始下一次视频通话。无需下载、插件或登录即可直接进行对话、发送消息和共享屏幕。',
+        joinDescription: '选择一个房间名称。<br />如何？',
+        joinButtonLabel: '加入房间',
+        joinLastLabel: '您的最近房间：',
     },
     site: {
         shortcutIcon: '../images/logo.svg',
         appleTouchIcon: '../images/logo.svg',
-        landingTitle: 'MiroTalk a Free Secure Video Calls, Chat & Screen Sharing.',
-        newCallTitle: 'MiroTalk a Free Secure Video Calls, Chat & Screen Sharing.',
-        newCallRoomTitle: 'Pick name. <br />Share URL. <br />Start conference.',
+        landingTitle: 'MiroTalk 免费安全视频通话、聊天及屏幕共享。',
+        newCallTitle: 'MiroTalk 免费安全视频通话、聊天及屏幕共享。',
+        newCallRoomTitle: '选择名称。 <br />分享 URL。 <br />开始会议。',
         newCallRoomDescription:
-            "Each room has its disposable URL. Just pick a room name and share your custom URL. It's that easy.",
-        loginTitle: 'MiroTalk - Host Protected login required.',
-        clientTitle: 'MiroTalk WebRTC Video call, Chat Room & Screen Sharing.',
-        privacyPolicyTitle: 'MiroTalk - privacy and policy.',
-        stunTurnTitle: 'Test Stun/Turn Servers.',
-        notFoundTitle: 'MiroTalk - 404 Page not found.',
+            "每个房间都有一个临时 URL。只需选择房间名称并分享您的自定义 URL。如此简单。",
+        loginTitle: 'MiroTalk - 需要受保护的登录权限。',
+        clientTitle: 'MiroTalk WebRTC 视频通话、聊天室及屏幕共享。',
+        privacyPolicyTitle: 'MiroTalk - 隐私政策。',
+        stunTurnTitle: '测试 Stun/Turn 服务器。',
+        notFoundTitle: 'MiroTalk - 404 页面未找到。',
     },
     html: {
         features: true,
         browsers: true,
-        teams: true, // please keep me always true ;)
+        teams: true, // 请始终保留为真 ;)
         tryEasier: true,
         poweredBy: true,
         sponsors: true,
@@ -79,17 +79,17 @@ let brand = {
                 id="support-button" 
                 data-umami-event="Support button" 
                 onclick="window.open('https://codecanyon.net/user/miroslavpejic85')">
-                <i class="fas fa-heart" ></i>&nbsp;Support
+                <i class="fas fa-heart"></i>&nbsp;支持
             </button>
             <br /><br /><br />
-            Author:<a 
+            作者:<a 
                 id="linkedin-button" 
                 data-umami-event="Linkedin button" 
                 href="https://www.linkedin.com/in/miroslav-pejic-976a07101/" target="_blank"> 
                 Miroslav Pejic
             </a>
             <br /><br />
-            Email:<a 
+            电子邮件:<a 
                 id="email-button" 
                 data-umami-event="Email button" 
                 href="mailto:miroslav.pejic.85@gmail.com?subject=MiroTalk P2P info"> 
@@ -97,12 +97,13 @@ let brand = {
             </a>
             <br /><br />
             <hr />
-            <span>&copy; 2025 MiroTalk P2P, all rights reserved</span>
+            <span>&copy; 2025 MiroTalk P2P，保留所有权利</span>
             <hr />
         `,
     },
     //...
 };
+
 
 /**
  * Get started
