@@ -205,9 +205,10 @@ class MattermostController {
 
     getMeetingResponseMessage(meetingUrl) {
         return this.meetingService.secure
-            ? `🔒 [Join your secure private meeting](${meetingUrl})`
-            : `🌐 Join meeting: ${meetingUrl}`;
+            ? `🔒 [加入您的安全私人会议](${meetingUrl})`
+            : `🌐 加入会议: ${meetingUrl}`;
     }
+
 }
 
 module.exports = MattermostController;
