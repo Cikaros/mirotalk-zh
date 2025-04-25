@@ -99,7 +99,7 @@ if (speechRecognition) {
         elemDisplay(speechRecognitionStart, false);
         elemDisplay(speechRecognitionStop, true, 'block');
         setColor(speechRecognitionIcon, 'lime');
-        !isPersistentMode ? userLog('toast', 'TSpeech recognition started') : (isPersistent = true);
+        !isPersistentMode ? userLog('toast', '语音识别已启动') : (isPersistent = true);
     };
 
     // Detect the said words
@@ -132,7 +132,7 @@ if (speechRecognition) {
 
     recognition.onerror = function (event) {
         console.error('Speech recognition error', event.error);
-        if (!isPersistent || !isPersistentMode) userLog('toast', `Transcription error ${event.error}`, 6000);
+        if (!isPersistent || !isPersistentMode) userLog('toast', `翻译错误 ${event.error}`, 6000);
     };
 
     recognition.onend = function () {
@@ -148,7 +148,7 @@ if (speechRecognition) {
             }, 2000);
         } else {
             isPersistent = false;
-            userLog('toast', 'Speech recognition stopped');
+            userLog('toast', '语音识别已停止');
         }
     };
 

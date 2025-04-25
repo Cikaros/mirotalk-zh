@@ -1120,7 +1120,7 @@ function initClientPeer() {
     setTheme();
 
     if (!isWebRTCSupported) {
-        return userLog('error', 'This browser seems not supported WebRTC!');
+        return userLog('error', '此浏览器似乎不支持WebRTC！');
     }
 
     // check if video Full screen supported on default true
@@ -1290,8 +1290,8 @@ function handleUnauthorized() {
         allowEscapeKey: false,
         background: swBg,
         imageUrl: images.forbidden,
-        title: 'Ops, Unauthorized',
-        text: 'The host has user authentication enabled',
+        title: '抱歉，您没有权限访问。',
+        text: '主机启用了用户认证',
         confirmButtonText: `Login`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
@@ -1314,8 +1314,8 @@ function roomIsBusy() {
         background: swBg,
         imageUrl: images.forbidden,
         position: 'center',
-        title: 'Room is busy',
-        html: `The room is limited to ${userLimits.count} users. <br/> Please try again later`,
+        title: '房间已满',
+        html: `该房间限于${userLimits.count}名用户。 <br/> 请稍后再试!`,
         showDenyButton: false,
         confirmButtonText: `OK`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
@@ -1627,8 +1627,8 @@ function userNameAlreadyInRoom() {
         background: swBg,
         imageUrl: images.forbidden,
         position: 'center',
-        title: 'Username',
-        html: `The Username is already in use. <br/> Please try with another one`,
+        title: '用户名',
+        html: `用户名已被使用。<br />请尝试使用另一个用户名。`,
         showDenyButton: false,
         confirmButtonText: `OK`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
@@ -1827,7 +1827,7 @@ async function changeInitCamera(deviceId) {
      */
     function reloadBrowser(err) {
         console.error('[Error] changeInitCamera', err);
-        userLog('error', 'Error while swapping init camera' + err);
+        userLog('error', '切换初始摄像头时出错' + err);
         initVideoSelect.selectedIndex = 0;
         videoSelect.selectedIndex = 0;
         refreshLsDevices();
@@ -1897,7 +1897,7 @@ async function changeLocalCamera(deviceId) {
      */
     function printError(err) {
         console.error('[Error] changeLocalCamera', err);
-        userLog('error', 'Error while swapping local camera ' + err);
+        userLog('error', '切换本地摄像头时出错 ' + err);
     }
 }
 
@@ -1926,7 +1926,7 @@ async function changeLocalMicrophone(deviceId) {
         })
         .catch((err) => {
             console.error('[Error] changeLocalMicrophone', err);
-            userLog('error', 'Error while swapping local microphone' + err);
+            userLog('error', '切换本地麦克风时出错' + err);
         });
 }
 
@@ -2323,7 +2323,7 @@ async function handleRtcOffer(peer_id) {
                     })
                     .catch((err) => {
                         console.error('[Error] offer setLocalDescription', err);
-                        userLog('error', 'Offer setLocalDescription failed ' + err);
+                        userLog('error', '设置本地描述失败 ' + err);
                     });
             })
             .catch((err) => {
@@ -2377,7 +2377,7 @@ function handleSessionDescription(config) {
                             })
                             .catch((err) => {
                                 console.error('[Error] answer setLocalDescription', err);
-                                userLog('error', 'Answer setLocalDescription failed ' + err);
+                                userLog('error', '设置本地描述失败 ' + err);
                             });
                     })
                     .catch((err) => {
@@ -3281,7 +3281,7 @@ function checkShareScreen() {
             background: swBg,
             position: 'center',
             icon: 'question',
-            text: 'Do you want to share your screen?',
+            text: '你想共享屏幕吗？',
             showDenyButton: true,
             confirmButtonText: `Yes`,
             denyButtonText: `No`,
@@ -3908,7 +3908,7 @@ function handleVideoPlayerFs(videoId, videoFullScreenBtnId, peer_id = null) {
     // on button click go on FS mobile/desktop
     videoFullScreenBtn.addEventListener('click', (e) => {
         if (videoPlayer.classList.contains('videoCircle')) {
-            return userLog('toast', 'Full Screen not allowed if video on privacy mode');
+            return userLog('toast', '隐私模式下不允许全屏播放视频');
         }
         gotoFS();
     });
@@ -3916,7 +3916,7 @@ function handleVideoPlayerFs(videoId, videoFullScreenBtnId, peer_id = null) {
     // on video click go on FS
     videoPlayer.addEventListener('click', (e) => {
         if (videoPlayer.classList.contains('videoCircle')) {
-            return userLog('toast', 'Full Screen not allowed if video on privacy mode');
+            return userLog('toast', '隐私模式下不允许全屏播放视频');
         }
         // not mobile on click go on FS or exit from FS
         if (!isMobileDevice) {
@@ -3947,7 +3947,7 @@ function handleVideoPlayerFs(videoId, videoFullScreenBtnId, peer_id = null) {
     }
 
     function showMsg() {
-        userLog('toast', 'Full screen mode work when video is on');
+        userLog('toast', '全屏模式在视频播放时有效。');
     }
 
     function handleFSVideo() {
@@ -4013,13 +4013,13 @@ function handleFileDragAndDrop(elemId, peer_id, itsMe = false) {
         e.stopPropagation();
         e.target.parentElement.style.outline = 'none';
         if (itsMe) {
-            return userLog('warning', 'You cannot send files to yourself.');
+            return userLog('warning', '你不能给自己发送文件。');
         }
         if (sendInProgress) {
-            return userLog('warning', 'Please wait for the previous file to be sent.');
+            return userLog('warning', '请等待前一个文件发送完毕。');
         }
         if (e.dataTransfer.items && e.dataTransfer.items.length > 1) {
-            return userLog('warning', 'Please drag and drop a single file.');
+            return userLog('warning', '请拖放一个文件。');
         }
         // Use DataTransferItemList interface to access the file(s)
         if (e.dataTransfer.items) {
@@ -4027,7 +4027,7 @@ function handleFileDragAndDrop(elemId, peer_id, itsMe = false) {
             const item = e.dataTransfer.items[0].webkitGetAsEntry();
             console.log('Drag and drop', item);
             if (item.isDirectory) {
-                return userLog('warning', 'Please drag and drop a single file not a folder.', 'top-end');
+                return userLog('warning', '请拖放一个单个文件，而不是文件夹。', 'top-end');
             }
             const file = e.dataTransfer.items[0].getAsFile();
             sendFileInformations(file, peer_id);
@@ -4110,7 +4110,7 @@ function handleVideoPinUnpin(elemId, pnId, camId, peerId, isScreen = false) {
                 if (pinnedVideoPlayerId != videoPlayer.id) {
                     isVideoPinned = true;
                     if (isScreenEnabled) return;
-                    return userLog('toast', 'Another video seems pinned, unpin it before to pin this one', 5000);
+                    return userLog('toast', '另一个视频被固定了，请先取消固定再固定这个视频。', 5000);
                 }
                 if (!isScreenStreaming) videoPlayer.style.objectFit = 'var(--video-object-fit)';
                 if (isScreen || videoPlayer.style.name == peerId + '_typeScreen')
@@ -4173,7 +4173,7 @@ function handleVideoFocusMode(remoteVideoFocusBtn, remoteVideoWrap, remoteMedia)
     if (remoteVideoFocusBtn) {
         remoteVideoFocusBtn.addEventListener('click', (e) => {
             if (isHideMeActive) {
-                return userLog('toast', 'To use this feature, please toggle Hide self view before', 'top-end', 6000);
+                return userLog('toast', '要使用此功能，请先切换“隐藏自我视图”选项。', 'top-end', 6000);
             }
             isHideALLVideosActive = !isHideALLVideosActive;
             e.target.style.color = isHideALLVideosActive ? 'lime' : 'white';
@@ -4283,15 +4283,15 @@ function handleVideoZoomInOut(zoomInBtnId, zoomOutBtnId, mediaId, peerId = null)
 
     if (buttons.local.showZoomInOutBtn) {
         zoomIn.addEventListener('click', () => {
-            if (isVideoOf(id)) return userLog('toast', 'Zoom in work when video is on');
-            if (isVideoPrivacyMode(video)) return userLog('toast', 'Zoom in not allowed if video on privacy mode');
+            if (isVideoOf(id)) return userLog('toast', '视频开启时放大工作区域');
+            if (isVideoPrivacyMode(video)) return userLog('toast', '隐私模式下不允许放大视频');
             zoom = zoom + 0.1;
             setTransform();
         });
 
         zoomOut.addEventListener('click', () => {
-            if (isVideoOf(id)) return userLog('toast', 'Zoom out work when video is on');
-            if (isVideoPrivacyMode(video)) return userLog('toast', 'Zoom out not allowed if video on privacy mode');
+            if (isVideoOf(id)) return userLog('toast', '视频播放时缩小工作区');
+            if (isVideoPrivacyMode(video)) return userLog('toast', '隐私模式下不允许缩小视频');
             zoom = zoom - 0.1;
             setTransform();
         });
@@ -4408,7 +4408,7 @@ function handleVideoToImg(videoStream, videoToImgBtn, peer_id = null) {
     const video = getId(videoStream);
     videoTIBtn.addEventListener('click', () => {
         if (video.classList.contains('videoCircle')) {
-            return userLog('toast', 'Snapshot not allowed if video on privacy mode');
+            return userLog('toast', '隐私模式下不允许拍照');
         }
         if (peer_id !== null) {
             // handle remote video snapshot
@@ -4422,7 +4422,7 @@ function handleVideoToImg(videoStream, videoToImgBtn, peer_id = null) {
                 return takeSnapshot(video);
             }
         }
-        userLog('toast', 'Snapshot not work on video disabled');
+        userLog('toast', '快照功能在视频禁用时无法使用。');
     });
 }
 
@@ -4538,7 +4538,7 @@ function setShareRoomBtn() {
 function setHideMeButton() {
     hideMeBtn.addEventListener('click', (e) => {
         if (isHideALLVideosActive) {
-            return userLog('toast', 'To use this feature, please toggle video focus mode', 'top-end', 6000);
+            return userLog('toast', '要使用此功能，请切换到视频焦点模式。', 'top-end', 6000);
         }
         isHideMeActive = !isHideMeActive;
         handleHideMe(isHideMeActive);
@@ -4744,7 +4744,7 @@ function setChatRoomBtn() {
     // show msger participants section
     msgerCPBtn.addEventListener('click', (e) => {
         if (!thereArePeerConnections()) {
-            return userLog('info', 'No participants detected');
+            return userLog('info', '未检测到参与者');
         }
         elemDisplay(msgerCP, true, 'flex');
     });
@@ -4759,7 +4759,7 @@ function setChatRoomBtn() {
         if (chatMessages.length != 0) {
             return cleanMessages();
         }
-        userLog('info', 'No chat messages to delete');
+        userLog('info', '没有聊天消息可删除');
     });
 
     // save chat messages to file
@@ -4767,7 +4767,7 @@ function setChatRoomBtn() {
         if (chatMessages.length != 0) {
             return downloadChatMsgs();
         }
-        userLog('info', 'No chat messages to save');
+        userLog('info', '没有聊天消息需要保存');
     });
 
     // close chat room - show left button and status menu if hide
@@ -4923,7 +4923,7 @@ function setCaptionRoomBtn() {
             if (transcripts.length != 0) {
                 return cleanCaptions();
             }
-            userLog('info', 'No captions to delete');
+            userLog('info', '没有要删除的字幕。');
         });
 
         // save caption transcripts to file
@@ -4931,7 +4931,7 @@ function setCaptionRoomBtn() {
             if (transcripts.length != 0) {
                 return downloadCaptions();
             }
-            userLog('info', 'No captions to save');
+            userLog('info', '没有要保存的字幕。');
         });
 
         // close caption box - show left button and status menu if hide
@@ -5218,7 +5218,7 @@ async function snapshotRoom() {
         };
     } catch (err) {
         console.error('Error: ' + err);
-        userLog('error', 'Snapshot room error ' + err.message, 6000);
+        userLog('error', '快照房间错误 ' + err.message, 6000);
     }
 }
 
@@ -5366,7 +5366,7 @@ async function documentPictureInPictureOpen() {
 
         if (!cloneVideoElements()) {
             documentPictureInPictureClose();
-            return userLog('toast', 'No video allowed for Document PIP');
+            return userLog('toast', '不允许为文件PIP上传视频');
         }
 
         const videoObserver = new MutationObserver(() => {
@@ -5420,14 +5420,14 @@ function setMySettingsBtn() {
         notifyBySound = e.currentTarget.checked;
         lsSettings.sounds = notifyBySound;
         lS.setSettings(lsSettings);
-        userLog('toast', `${icons.sounds} Notify & sounds ` + (notifyBySound ? 'ON' : 'OFF'));
+        userLog('toast', `${icons.sounds} 通知与声音 ` + (notifyBySound ? 'ON' : 'OFF'));
         playSound('switch');
     });
     switchShare.addEventListener('change', (e) => {
         notify = e.currentTarget.checked;
         lsSettings.share_on_join = notify;
         lS.setSettings(lsSettings);
-        userLog('toast', `${icons.share} Share room on join ` + (notify ? 'ON' : 'OFF'));
+        userLog('toast', `${icons.share} 加入时共享房间 ` + (notify ? 'ON' : 'OFF'));
         playSound('switch');
     });
     switchKeepButtonsVisible.addEventListener('change', (e) => {
@@ -5435,7 +5435,7 @@ function setMySettingsBtn() {
         lsSettings.keep_buttons_visible = isButtonsBarOver;
         lS.setSettings(lsSettings);
         const status = isButtonsBarOver ? 'enabled' : 'disabled';
-        userLog('toast', `Buttons always visible ${status}`);
+        userLog('toast', `按钮可见：${status}`);
         playSound('switch');
     });
 
@@ -5445,7 +5445,7 @@ function setMySettingsBtn() {
         // Push to talk
         switchPushToTalk.addEventListener('change', (e) => {
             isPushToTalkActive = e.currentTarget.checked;
-            userLog('toast', `👆 Push to talk ` + (isPushToTalkActive ? 'ON' : 'OFF'));
+            userLog('toast', `👆 对讲模式 ` + (isPushToTalkActive ? 'ON' : 'OFF'));
             playSound('switch');
         });
     }
@@ -5454,7 +5454,7 @@ function setMySettingsBtn() {
         isAudioPitchBar = e.currentTarget.checked;
         lsSettings.pitch_bar = isAudioPitchBar;
         lS.setSettings(lsSettings);
-        userLog('toast', `${icons.pitchBar} Audio pitch bar ` + (isAudioPitchBar ? 'ON' : 'OFF'));
+        userLog('toast', `${icons.pitchBar} 音调条 ` + (isAudioPitchBar ? 'ON' : 'OFF'));
         playSound('switch');
     });
 
@@ -5466,7 +5466,7 @@ function setMySettingsBtn() {
         recPrioritizeH264 = e.currentTarget.checked;
         lsSettings.rec_prioritize_h264 = recPrioritizeH264;
         lS.setSettings(lsSettings);
-        userLog('toast', `${icons.codecs} Recording prioritize h.264 ` + (recPrioritizeH264 ? 'ON' : 'OFF'));
+        userLog('toast', `${icons.codecs} 录音优先使用H.264编码 ` + (recPrioritizeH264 ? 'ON' : 'OFF'));
         playSound('switch');
     });
     // Recording pause/resume
@@ -5484,7 +5484,7 @@ function setMySettingsBtn() {
         lsSettings.theme_color = themeCustom.color;
         lS.setSettings(lsSettings);
         setTheme();
-        userLog('toast', `${icons.theme} Custom theme keep ` + (themeCustom.keep ? 'ON' : 'OFF'));
+        userLog('toast', `${icons.theme} 自定义主题保留 ` + (themeCustom.keep ? 'ON' : 'OFF'));
         playSound('switch');
         e.target.blur();
     };
@@ -5758,7 +5758,7 @@ function handleShortcuts() {
     } else {
         switchShortcuts.addEventListener('change', (e) => {
             const status = setKeyboardShortcuts(e.currentTarget.checked);
-            userLog('toast', `Keyboard shortcuts ${status}`);
+            userLog('toast', `键盘快捷键 ${status}`);
             playSound('switch');
         });
 
@@ -6164,7 +6164,7 @@ async function setLocalMaxFps(maxFrameRate, type = 'camera') {
             type === 'camera'
                 ? (videoFpsSelect.selectedIndex = videoFpsSelectedIndex)
                 : (screenFpsSelect.selectedIndex = screenFpsSelectedIndex);
-            userLog('error', "Your device doesn't support the selected fps, please select the another one.");
+            userLog('error', "您的设备不支持所选的帧率，请选择另一个。");
         });
 }
 
@@ -6184,7 +6184,7 @@ async function setLocalVideoQuality() {
         .catch((err) => {
             videoQualitySelect.selectedIndex = videoQualitySelectedIndex;
             console.error('setLocalVideoQuality', err);
-            userLog('error', "Your device doesn't support the selected video quality, please select the another one.");
+            userLog('error', "您的设备不支持所选的视频质量，请选择其他质量。");
         });
 }
 
@@ -6311,7 +6311,7 @@ async function shareRoomUrl() {
             // not add title and description to load metadata from url
             const roomURL = getRoomURL();
             await navigator.share({ url: roomURL });
-            userLog('toast', 'Room Shared successfully!');
+            userLog('toast', '房间共享成功！');
         } catch (err) {
             /*
             This feature is available only in secure contexts (HTTPS),
@@ -6407,7 +6407,7 @@ function copyRoomURL() {
     navigator.clipboard.writeText(tmpInput.value);
     console.log('Copied to clipboard Join Link ', roomURL);
     document.body.removeChild(tmpInput);
-    userLog('toast', 'Meeting URL copied to clipboard 👍');
+    userLog('toast', '会议链接已复制到剪贴板 👍');
 }
 
 /**
@@ -6420,7 +6420,7 @@ function shareRoomByEmail() {
         background: swBg,
         imageUrl: images.message,
         position: 'center',
-        title: 'Select a Date and Time',
+        title: '选择日期和时间',
         html: '<input type="text" id="datetimePicker" class="flatpickr" />',
         showCancelButton: true,
         confirmButtonText: 'OK',
@@ -6589,7 +6589,7 @@ async function swapCamera() {
         }
     } catch (err) {
         console.log('[Error] to swapping camera', err);
-        userLog('error', 'Error to swapping the camera ' + err);
+        userLog('error', '切换相机时出错 ' + err);
         // https://blog.addpipe.com/common-getusermedia-errors/
     }
 }
@@ -7115,7 +7115,7 @@ function recordingOptions(options, audioMixerTracks) {
         background: swBg,
         position: 'top',
         imageUrl: images.recording,
-        title: 'Recording options',
+        title: '录音选项',
         showDenyButton: true,
         showCancelButton: true,
         cancelButtonColor: 'red',
@@ -7425,15 +7425,15 @@ function downloadRecordedStream() {
         userLog(
             'success-html',
             `<div style="text-align: left;">
-                🔴 &nbsp; Recording Info: <br/>
+                🔴 &nbsp; 录制信息: <br/>
                 ${recordingInfo}
-                Please wait to be processed, then will be downloaded to your ${currentDevice} device.
+                请等待处理完成，然后将下载到您的 ${currentDevice} 设备。
             </div>`,
         );
 
         saveBlobToFile(blob, recFileName);
     } catch (err) {
-        userLog('error', 'Recording save failed: ' + err);
+        userLog('error', '录音保存失败: ' + err);
     }
 }
 
@@ -7583,7 +7583,7 @@ function canBePinned() {
  */
 function toggleChatPin() {
     if (isCaptionPinned) {
-        return userLog('toast', 'Please unpin the Caption that appears to be currently pinned');
+        return userLog('toast', '请取消固定当前显示的标题。');
     }
     isChatPinned ? chatUnpin() : chatPin();
     playSound('click');
@@ -7696,7 +7696,7 @@ function captionCenter() {
  */
 function toggleCaptionPin() {
     if (isChatPinned) {
-        return userLog('toast', 'Please unpin the Chat that appears to be currently pinned');
+        return userLog('toast', '请取消固定当前显示的聊天。');
     }
     isCaptionPinned ? captionUnpin() : captionPin();
     playSound('click');
@@ -7765,8 +7765,8 @@ function cleanMessages() {
     Swal.fire({
         background: swBg,
         position: 'top',
-        title: 'Chat',
-        text: 'Clean up chat messages?',
+        title: '聊天',
+        text: '清理聊天消息？',
         imageUrl: images.delete,
         showDenyButton: true,
         confirmButtonText: `Yes`,
@@ -7798,7 +7798,7 @@ function cleanCaptions() {
     Swal.fire({
         background: swBg,
         position: 'center',
-        title: 'Clean up all caption transcripts?',
+        title: '清理所有字幕？',
         imageUrl: images.delete,
         showDenyButton: true,
         confirmButtonText: `Yes`,
@@ -7856,7 +7856,7 @@ async function sendChatMessage() {
     if (!thereArePeerConnections() && !isChatGPTOn) {
         cleanMessageInput();
         isChatPasteTxt = false;
-        return userLog('info', "Can't send message, no participants in the room");
+        return userLog('info', "无法发送消息，房间中没有参与者。");
     }
 
     msgerInput.value = filterXSS(msgerInput.value.trim());
@@ -7908,7 +7908,7 @@ function handleDataChannelChat(dataMessage) {
     }
     // show message from
     if (!showChatOnMessage) {
-        userLog('toast', `New message from: ${msgFrom}`);
+        userLog('toast', `来自的新消息: ${msgFrom}`);
     }
 
     setPeerChatAvatarImgName('left', msgFrom, msgFromAvatar);
@@ -8222,8 +8222,8 @@ function deleteMessage(id) {
     Swal.fire({
         background: swBg,
         position: 'top',
-        title: 'Chat',
-        text: 'Delete this messages?',
+        title: '聊天',
+        text: '删除这条消息？',
         imageUrl: images.delete,
         showDenyButton: true,
         confirmButtonText: `Yes`,
@@ -8746,7 +8746,7 @@ async function updateMyPeerName() {
     // check if peer name is already in use in the room
     if (await checkUserName(myPeerNameSet.value)) {
         myPeerNameSet.value = '';
-        return userLog('warning', 'Username is already in use!');
+        return userLog('warning', '用户名已被使用！');
     }
 
     // prevent xss execution itself
@@ -8755,7 +8755,7 @@ async function updateMyPeerName() {
     // prevent XSS injection to remote peer
     if (isHtml(myPeerNameSet.value)) {
         myPeerNameSet.value = '';
-        return userLog('warning', 'Invalid name!');
+        return userLog('warning', '无效的名称！');
     }
 
     const myNewPeerName = myPeerNameSet.value;
@@ -8779,7 +8779,7 @@ async function updateMyPeerName() {
     setPeerAvatarImgName('myVideoAvatarImage', myPeerName, myPeerAvatar);
     setPeerAvatarImgName('myProfileAvatar', myPeerName, myPeerAvatar);
     setPeerChatAvatarImgName('right', myPeerName, myPeerAvatar);
-    userLog('toast', 'My name changed to ' + myPeerName);
+    userLog('toast', '我的名字变成了 ' + myPeerName);
 }
 
 /**
@@ -8949,7 +8949,7 @@ function setPeerHandStatus(peer_id, peer_name, status) {
     const peerHandStatus = getId(peer_id + '_handStatus');
     if (status) {
         elemDisplay(peerHandStatus, true);
-        userLog('toast', `${icons.user} ${peer_name} \n has raised the hand!`);
+        userLog('toast', `${icons.user} ${peer_name} \n 举手了！`);
         playSound('raiseHand');
     } else {
         elemDisplay(peerHandStatus, false);
@@ -9050,7 +9050,7 @@ function sendPrivateMsgToPeer(toPeerId, toPeerName) {
         background: swBg,
         position: 'center',
         imageUrl: images.message,
-        title: 'Send private message',
+        title: '发送私信',
         input: 'text',
         showCancelButton: true,
         confirmButtonText: `Send`,
@@ -9066,7 +9066,7 @@ function sendPrivateMsgToPeer(toPeerId, toPeerName) {
             }
             emitMsg(myPeerName, myPeerAvatar, toPeerName, pMsg, true, toPeerId);
             appendMessage(myPeerName, rightChatAvatar, 'right', pMsg, true, null, toPeerName);
-            userLog('toast', 'Message sent to ' + toPeerName + ' 👍');
+            userLog('toast', '发送给 ' + toPeerName + ' 👍');
         }
     });
 }
@@ -9355,7 +9355,7 @@ function setMyAudioOff(peer_name) {
     myAudioStatus = localAudioMediaStream.getAudioTracks()[0].enabled;
     audioBtn.className = className.audioOff;
     setMyAudioStatus(myAudioStatus);
-    userLog('toast', `${icons.user} ${peer_name} \n has disabled your audio`);
+    userLog('toast', `${icons.user} ${peer_name} \n 已禁用您的音频`);
     playSound('off');
 }
 
@@ -9369,7 +9369,7 @@ function setMyAudioOn(peer_name) {
     myAudioStatus = localAudioMediaStream.getAudioTracks()[0].enabled;
     audioBtn.className = className.audioOn;
     setMyAudioStatus(myAudioStatus);
-    userLog('toast', `${icons.user} ${peer_name} \n has enabled your audio`);
+    userLog('toast', `${icons.user} ${peer_name} \n 已启用您的音频`);
     playSound('on');
 }
 
@@ -9384,7 +9384,7 @@ function setMyVideoOff(peer_name) {
     myVideoStatus = localVideoMediaStream.getVideoTracks()[0].enabled;
     videoBtn.className = className.videoOff;
     setMyVideoStatus(myVideoStatus);
-    userLog('toast', `${icons.user} ${peer_name} \n has disabled your video`);
+    userLog('toast', `${icons.user} ${peer_name} \n 已禁用您的视频。`);
     playSound('off');
 }
 
@@ -9394,17 +9394,17 @@ function setMyVideoOff(peer_name) {
  */
 function disableAllPeers(element) {
     if (!thereArePeerConnections()) {
-        return userLog('info', 'No participants detected');
+        return userLog('info', '未检测到参与者');
     }
     Swal.fire({
         background: swBg,
         position: 'center',
         imageUrl: element == 'audio' ? images.audioOff : images.videoOff,
-        title: element == 'audio' ? 'Mute everyone except yourself?' : 'Hide everyone except yourself?',
+        title: element == 'audio' ? '屏蔽所有人，保留自己？' : '隐藏所有人，保留自己？',
         text:
             element == 'audio'
-                ? "Once muted, you won't be able to unmute them, but they can unmute themselves at any time."
-                : "Once hided, you won't be able to unhide them, but they can unhide themselves at any time.",
+                ? "一旦被禁言，你将无法取消禁言，但他们可以在任何时候自行解除禁言。"
+                : "一旦隐藏，你就无法再取消隐藏，但他们可以在任何时候自行取消隐藏。",
         showDenyButton: true,
         confirmButtonText: element == 'audio' ? `Mute` : `Hide`,
         denyButtonText: `Cancel`,
@@ -9414,11 +9414,11 @@ function disableAllPeers(element) {
         if (result.isConfirmed) {
             switch (element) {
                 case 'audio':
-                    userLog('toast', 'Mute everyone 👍');
+                    userLog('toast', '全员静音 👍');
                     emitPeersAction('muteAudio');
                     break;
                 case 'video':
-                    userLog('toast', 'Hide everyone 👍');
+                    userLog('toast', '隐藏所有人 👍');
                     emitPeersAction('hideVideo');
                     break;
                 default:
@@ -9433,14 +9433,14 @@ function disableAllPeers(element) {
  */
 function ejectEveryone() {
     if (!thereArePeerConnections()) {
-        return userLog('info', 'No participants detected');
+        return userLog('info', '未检测到参与者');
     }
     Swal.fire({
         background: swBg,
         imageUrl: images.leave,
         position: 'center',
-        title: 'Eject everyone except yourself?',
-        text: 'Are you sure to want eject all participants from the room?',
+        title: '除了你自己，把所有人都踢出吗？',
+        text: '确定要将所有参与者从房间中踢出吗？',
         showDenyButton: true,
         confirmButtonText: `Yes`,
         denyButtonText: `No`,
@@ -9460,17 +9460,17 @@ function ejectEveryone() {
  */
 function disablePeer(peer_id, element) {
     if (!thereArePeerConnections()) {
-        return userLog('info', 'No participants detected');
+        return userLog('info', '未检测到参与者');
     }
     Swal.fire({
         background: swBg,
         position: 'center',
         imageUrl: element == 'audio' ? images.audioOff : images.videoOff,
-        title: element == 'audio' ? 'Mute this participant?' : 'Hide this participant?',
+        title: element == 'audio' ? '静音此参与者？' : '隐藏此参与者？',
         text:
             element == 'audio'
-                ? "Once muted, you won't be able to unmute them, but they can unmute themselves at any time."
-                : "Once hided, you won't be able to unhide them, but they can unhide themselves at any time.",
+                ? "一旦被禁言，你将无法取消禁言，但他们可以在任何时候自行解除禁言。"
+                : "一旦被隐藏，你将无法再取消隐藏，但它们可以在任何时候自行取消隐藏。",
         showDenyButton: true,
         confirmButtonText: element == 'audio' ? `Mute` : `Hide`,
         denyButtonText: `Cancel`,
@@ -9480,11 +9480,11 @@ function disablePeer(peer_id, element) {
         if (result.isConfirmed) {
             switch (element) {
                 case 'audio':
-                    userLog('toast', 'Mute audio 👍');
+                    userLog('toast', '静音音频 👍');
                     emitPeerAction(peer_id, 'muteAudio');
                     break;
                 case 'video':
-                    userLog('toast', 'Hide video 👍');
+                    userLog('toast', '隐藏视频 👍');
                     emitPeerAction(peer_id, 'hideVideo');
                     break;
                 default:
@@ -9527,7 +9527,7 @@ function handleRoomAction(config, emit = false) {
                     showClass: { popup: 'animate__animated animate__fadeInDown' },
                     hideClass: { popup: 'animate__animated animate__fadeOutUp' },
                     inputValidator: (pwd) => {
-                        if (!pwd) return 'Please enter the Room password';
+                        if (!pwd) return '请输入房间密码';
                         thisRoomPassword = pwd;
                     },
                 }).then((result) => {
@@ -9561,13 +9561,13 @@ function handleRoomStatus(config) {
     switch (action) {
         case 'lock':
             playSound('locked');
-            userLog('toast', `${icons.user} ${peer_name} \n has 🔒 LOCKED the room by password`, 'top-end');
+            userLog('toast', `${icons.user} ${peer_name} \n 使用密码锁定了房间。`, 'top-end');
             elemDisplay(lockRoomBtn, false);
             elemDisplay(unlockRoomBtn, true);
             isRoomLocked = true;
             break;
         case 'unlock':
-            userLog('toast', `${icons.user} ${peer_name} \n has 🔓 UNLOCKED the room`, 'top-end');
+            userLog('toast', `${icons.user} ${peer_name} \n 已经解锁了房间。`, 'top-end');
             elemDisplay(unlockRoomBtn, false);
             elemDisplay(lockRoomBtn, true);
             isRoomLocked = false;
@@ -9593,8 +9593,8 @@ function handleRoomLocked() {
         background: swBg,
         position: 'center',
         imageUrl: images.locked,
-        title: 'Oops, Wrong Room Password',
-        text: 'The room is locked, try with another one.',
+        title: '哎呀，房间密码错误',
+        text: '房间被锁了，请尝试另外一间。',
         showDenyButton: false,
         confirmButtonText: `Ok`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
@@ -9615,9 +9615,9 @@ function handleUnlockTheRoom() {
         allowEscapeKey: false,
         background: swBg,
         imageUrl: images.locked,
-        title: 'Oops, Room is Locked',
+        title: '哎呀，房间被锁住了。',
         input: 'text',
-        inputPlaceholder: 'Enter the Room password',
+        inputPlaceholder: '输入房间密码',
         confirmButtonText: `OK`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
@@ -9663,7 +9663,7 @@ function toggleLockUnlockWhiteboard() {
     whiteboardAction(getWhiteboardAction(action));
 
     if (wbIsLock) {
-        userLog('toast', 'The whiteboard is locked. \n The participants cannot interact with it.');
+        userLog('toast', '白板被锁了。\n参与者无法与其互动。');
         playSound('locked');
     }
 }
@@ -9800,7 +9800,7 @@ function whiteboardAddObj(type) {
         case 'imgUrl':
             Swal.fire({
                 background: swBg,
-                title: 'Image URL',
+                title: '图像URL',
                 input: 'text',
                 showCancelButton: true,
                 confirmButtonText: 'OK',
@@ -9814,16 +9814,16 @@ function whiteboardAddObj(type) {
                             addWbCanvasObj(myImg);
                         });
                     } else {
-                        userLog('error', 'The URL is not a valid image');
+                        userLog('error', '该URL不是一个有效的图片地址。');
                     }
                 }
             });
             break;
         case 'imgFile':
-            setupFileSelection('Select the image', wbImageInput, renderImageToCanvas);
+            setupFileSelection('选择图片', wbImageInput, renderImageToCanvas);
             break;
         case 'pdfFile':
-            setupFileSelection('Select the PDF', wbPdfInput, renderPdfToCanvas);
+            setupFileSelection('选择PDF文件', wbPdfInput, renderPdfToCanvas);
             break;
         case 'text':
             const text = new fabric.IText('Lorem Ipsum', {
@@ -9899,7 +9899,7 @@ function setupFileSelection(title, accept, renderToCanvas) {
         input: 'file',
         html: `
         <div id="dropArea">
-            <p>Drag and drop your file here</p>
+            <p>将文件拖放至此</p>
         </div>
         `,
         inputAttributes: {
@@ -10275,8 +10275,8 @@ function confirmCleanBoard() {
         background: swBg,
         imageUrl: images.delete,
         position: 'center',
-        title: 'Clean the board',
-        text: 'Are you sure you want to clean the board?',
+        title: '清除白板',
+        text: '你确定要清除白板吗？',
         showDenyButton: true,
         confirmButtonText: `Yes`,
         denyButtonText: `No`,
@@ -10310,7 +10310,7 @@ function handleWhiteboardAction(config, logMe = true) {
     const { peer_name, action, color } = config;
 
     if (logMe) {
-        userLog('toast', `${icons.user} ${peer_name} \n whiteboard action: ${action}`);
+        userLog('toast', `${icons.user} ${peer_name} \n 白板操作: ${action}`);
     }
     switch (action) {
         case 'bgcolor':
@@ -10445,7 +10445,7 @@ function sendFileData(peer_id, broadcast) {
         if (offset === fileToSend.size) {
             sendInProgress = false;
             elemDisplay(sendFileDiv, false);
-            userLog('success', 'The file ' + fileToSend.name + ' was sent successfully.');
+            userLog('success', '文件'+ fileToSend.name + '已成功发送。');
         }
 
         if (offset < fileToSend.size) readSlice(offset);
@@ -10520,7 +10520,7 @@ function abortReceiveFileTransfer() {
  */
 function handleAbortFileTransfer(config) {
     console.log(`File transfer aborted by ${config.peer_name}`);
-    userLog('toast', `⚠️ File transfer aborted by ${config.peer_name}`);
+    userLog('toast', `⚠️ 文件传输已中止 ${config.peer_name}`);
     abortFileTransfer();
 }
 
@@ -10534,7 +10534,7 @@ function handleFileAbort() {
     receiveInProgress = false;
     elemDisplay(receiveFileDiv, false);
     console.log('File transfer aborted');
-    userLog('toast', '⚠️ File transfer aborted');
+    userLog('toast', '⚠️ 文件传输已中止');
 }
 
 /**
@@ -10558,11 +10558,11 @@ function selectFileToShare(peer_id, broadcast = false) {
         imageAlt: 'mirotalk-file-sharing',
         imageUrl: images.share,
         position: 'center',
-        title: 'Share file',
+        title: '分享文件',
         input: 'file',
         html: `
         <div id="dropArea">
-            <p>Drag and drop your file here</p>
+            <p>将文件拖放至此</p>
         </div>
         `,
         inputAttributes: {
@@ -10637,12 +10637,12 @@ function sendFileInformations(file, peer_id, broadcast = false) {
     if (fileToSend && fileToSend.size > 0) {
         // no peers in the room
         if (!thereArePeerConnections()) {
-            return userLog('info', 'No participants detected');
+            return userLog('info', '未检测到参与者');
         }
 
         // prevent XSS injection to remote peer (fileToSend.name is read only)
         if (isHtml(fileToSend.name) || !isValidFileName(fileToSend.name))
-            return userLog('warning', 'Invalid file name!');
+            return userLog('warning', '无效的文件名！');
 
         const fileInfo = {
             room_id: roomId,
@@ -10679,7 +10679,7 @@ function sendFileInformations(file, peer_id, broadcast = false) {
             sendFileData(peer_id, broadcast);
         }, 1000);
     } else {
-        userLog('error', 'File dragged not valid or empty.');
+        userLog('error', '文件拖动无效或为空。');
     }
 }
 
@@ -10759,7 +10759,7 @@ function endDownload() {
                 allowOutsideClick: false,
                 background: swBg,
                 position: 'center',
-                title: 'Received file',
+                title: '接收文件',
                 text: incomingFileInfo.file.fileName + ' size ' + bytesToSize(incomingFileInfo.file.fileSize),
                 imageUrl: e.target.result,
                 imageAlt: 'mirotalk-file-img-download',
@@ -10782,7 +10782,7 @@ function endDownload() {
             imageAlt: 'mirotalk-file-download',
             imageUrl: images.share,
             position: 'center',
-            title: 'Received file',
+            title: '接收文件',
             text: incomingFileInfo.file.fileName + ' size ' + bytesToSize(incomingFileInfo.file.fileSize),
             showDenyButton: true,
             confirmButtonText: `Save`,
@@ -10826,8 +10826,8 @@ function sendVideoUrl(peer_id = null) {
         background: swBg,
         position: 'center',
         imageUrl: images.vaShare,
-        title: 'Share a Video or Audio',
-        text: 'Paste a Video or audio URL',
+        title: '分享视频或音频',
+        text: '粘贴视频或音频URL',
         input: 'text',
         showCancelButton: true,
         confirmButtonText: `Share`,
@@ -10837,7 +10837,7 @@ function sendVideoUrl(peer_id = null) {
         if (result.value) {
             result.value = filterXSS(result.value);
             if (!thereArePeerConnections()) {
-                return userLog('info', 'No participants detected');
+                return userLog('info', '未检测到参与者');
             }
             console.log('Video URL: ' + result.value);
             /*
@@ -10846,7 +10846,7 @@ function sendVideoUrl(peer_id = null) {
                 https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3
             */
             if (!isVideoTypeSupported(result.value)) {
-                return userLog('warning', 'Something wrong, try with another Video or audio URL');
+                return userLog('warning', '出错了，请尝试使用另一个视频或音频的URL。');
             }
             const is_youtube = getVideoType(result.value) == 'na' ? true : false;
             const video_url = is_youtube ? getYoutubeEmbed(result.value) : result.value;
@@ -10996,11 +10996,11 @@ function handleVideoPlayer(config) {
     //
     switch (video_action) {
         case 'open':
-            userLog('toast', `${icons.user} ${peer_name} \n open video player`);
+            userLog('toast', `${icons.user} ${peer_name} \n 打开视频播放器`);
             openVideoUrlPlayer(config);
             break;
         case 'close':
-            userLog('toast', `${icons.user} ${peer_name} \n close video player`);
+            userLog('toast', `${icons.user} ${peer_name} \n 关闭视频播放器`);
             closeVideoUrlPlayer();
             break;
         default:
@@ -11033,8 +11033,8 @@ function kickOut(peer_id) {
         background: swBg,
         position: 'center',
         imageUrl: images.confirmation,
-        title: 'Kick out ' + pName,
-        text: 'Are you sure you want to kick out this participant?',
+        title: '踢出 ' + pName,
+        text: '你确定要将这个参与者移出吗？',
         showDenyButton: true,
         confirmButtonText: `Yes`,
         denyButtonText: `No`,
@@ -11065,7 +11065,7 @@ function handleCaptionActions(config) {
             if (!speechRecognition) {
                 userLog(
                     'info',
-                    `${peer_name} wants to start captions for this session, but your browser does not support it. Please use a Chromium-based browser like Google Chrome, Microsoft Edge, or Brave.`,
+                    `${peer_name} 想为本次会话开启字幕，但您的浏览器不支持。请使用基于Chromium的浏览器，如Google Chrome、Microsoft Edge或Brave。`,
                 );
                 return;
             }
@@ -11078,8 +11078,8 @@ function handleCaptionActions(config) {
                 showDenyButton: true,
                 background: swBg,
                 imageUrl: images.caption,
-                title: 'Start Captions',
-                text: `${peer_name} wants to start the captions for this session. Would you like to enable them?`,
+                title: '开启字幕',
+                text: `${peer_name} 想为这个会话开启字幕。您希望启用吗？`,
                 confirmButtonText: `Yes`,
                 denyButtonText: `No`,
                 showClass: { popup: 'animate__animated animate__fadeInDown' },
@@ -11125,9 +11125,9 @@ function handleKickedOut(config) {
         title: 'Kicked out!',
         html:
             `<h2 style="color: #FF2D00;">` +
-            `User ` +
+            `用户 ` +
             peer_name +
-            `</h2> will kick out you after <b style="color: #FF2D00;"></b> milliseconds.`,
+            `</h2> 将在 <b style="color: #FF2D00;"></b> 毫秒后踢出你。`,
         timer: 5000,
         timerProgressBar: true,
         didOpen: () => {
@@ -11174,10 +11174,10 @@ function showAbout() {
                             id="support-button" 
                             data-umami-event="Support button" 
                             onclick="window.open('https://codecanyon.net/user/miroslavpejic85', '_blank')">
-                            <i class="${className.heart}"></i>&nbsp;Support
+                            <i class="${className.heart}"></i>&nbsp;支持
                         </button>
                         <br /><br /><br />
-                        Author: 
+                        作者: 
                         <a 
                             id="linkedin-button" 
                             data-umami-event="Linkedin button" 
@@ -11186,7 +11186,7 @@ function showAbout() {
                             Miroslav Pejic
                         </a>
                         <br /><br />
-                        Email: 
+                        邮箱: 
                         <a 
                             id="email-button" 
                             data-umami-event="Email button" 
@@ -11228,8 +11228,8 @@ function leaveFeedback() {
         showDenyButton: true,
         background: swBg,
         imageUrl: images.feedback,
-        title: 'Leave a feedback',
-        text: 'Do you want to rate your MiroTalk experience?',
+        title: '留下反馈',
+        text: '你想要对 MiroTalk 进行评分吗？',
         confirmButtonText: `Yes`,
         denyButtonText: `No`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
