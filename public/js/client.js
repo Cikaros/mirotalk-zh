@@ -7120,7 +7120,7 @@ function recordingOptions(options, audioMixerTracks) {
         showCancelButton: true,
         cancelButtonColor: 'red',
         denyButtonColor: 'green',
-        confirmButtonText: `相机`,
+        confirmButtonText: `录制`,
         denyButtonText: `屏幕/窗口`,
         cancelButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
@@ -7412,10 +7412,10 @@ function downloadRecordedStream() {
         <br/>
         <br/>
             <ul>
-                <li>Time: ${recordingTime.innerText}</li>
-                <li>File: ${recFileName}</li>
-                <li>Codecs: ${recCodecs}</li>
-                <li>Size: ${blobFileSize}</li>
+                <li>录制时长: ${recordingTime.innerText}</li>
+                <li>文件: ${recFileName}</li>
+                <li>编码: ${recCodecs}</li>
+                <li>文件大小: ${blobFileSize}</li>
             </ul>
         <br/>
         `;
