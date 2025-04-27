@@ -680,7 +680,7 @@ let isHostProtected = false; // Username and Password required to initialize roo
 let isPeerAuthEnabled = false; // Username and Password required in the URL params to join room
 
 // survey
-let surveyActive = true; // when leaving the room give a feedback, if false will be redirected to newcall page
+let surveyActive = false; // when leaving the room give a feedback, if false will be redirected to newcall page
 let surveyURL = 'https://www.questionpro.com/t/AUs7VZq00L';
 
 // Redirect on leave room
@@ -1292,7 +1292,7 @@ function handleUnauthorized() {
         imageUrl: images.forbidden,
         title: '抱歉，您没有权限访问。',
         text: '主机启用了用户认证',
-        confirmButtonText: `Login`,
+        confirmButtonText: `登录`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then(() => {
@@ -1317,7 +1317,7 @@ function roomIsBusy() {
         title: '房间已满',
         html: `该房间限于${userLimits.count}名用户。 <br/> 请稍后再试!`,
         showDenyButton: false,
-        confirmButtonText: `OK`,
+        confirmButtonText: `好的`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -1527,9 +1527,9 @@ async function whoAreYou() {
             elemDisplay(loadingDiv, false);
         },
         inputValidator: async (value) => {
-            if (!value) return 'Please enter your email or name';
+            if (!value) return '请输入您的电子邮件或姓名。';
             // Long name
-            if (value.length > 30) return 'Name must be max 30 char';
+            if (value.length > 30) return '名称不得超过30个字符。';
 
             // prevent xss execution itself
             myPeerName = filterXSS(value);
@@ -1537,12 +1537,12 @@ async function whoAreYou() {
             // prevent XSS injection to remote peer
             if (isHtml(myPeerName)) {
                 myPeerName = '';
-                return 'Invalid name!';
+                return '无效的名称！';
             }
 
             // check if peer name is already in use in the room
             if (await checkUserName()) {
-                return 'Username is already in use!';
+                return '用户名已被使用！';
             } else {
                 // Hide username emoji
                 if (!usernameEmoji.classList.contains('hidden')) {
@@ -1630,7 +1630,7 @@ function userNameAlreadyInRoom() {
         title: '用户名',
         html: `用户名已被使用。<br />请尝试使用另一个用户名。`,
         showDenyButton: false,
-        confirmButtonText: `OK`,
+        confirmButtonText: `好的`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -2995,22 +2995,22 @@ function handleMediaError(mediaType, err) {
     switch (err.name) {
         case 'NotFoundError':
         case 'DevicesNotFoundError':
-            errMessage = 'Required track is missing';
+            errMessage = '所需的轨道缺失。';
             break;
         case 'NotReadableError':
         case 'TrackStartError':
-            errMessage = 'Already in use';
+            errMessage = '已经在使用中。';
             break;
         case 'OverconstrainedError':
         case 'ConstraintNotSatisfiedError':
-            errMessage = 'Constraints cannot be satisfied by available devices';
+            errMessage = '约束条件无法通过现有的设备来满足。';
             break;
         case 'NotAllowedError':
         case 'PermissionDeniedError':
-            errMessage = 'Permission denied in browser';
+            errMessage = '浏览器中拒绝权限';
             break;
         case 'TypeError':
-            errMessage = 'Empty constraints object';
+            errMessage = '空约束对象';
             break;
         default:
             break;
@@ -3019,14 +3019,14 @@ function handleMediaError(mediaType, err) {
     // Print message to inform user
     const $html = `
         <ul style="text-align: left">
-            <li>Media type: ${mediaType}</li>
-            <li>Error name: ${err.name}</li>
-            <li>Error message: <p style="color: red">${errMessage}</p></li>
-            <li>Common: <a href="https://blog.addpipe.com/common-getusermedia-errors" target="_blank">getUserMedia errors</a></li>
+            <li>媒体类型: ${mediaType}</li>
+            <li>错误名称: ${err.name}</li>
+            <li>错误信息: <p style="color: red">${errMessage}</p></li>
+            <li>普通的: <a href="https://blog.addpipe.com/common-getusermedia-errors" target="_blank">获取用户媒体错误</a></li>
         </ul>
     `;
 
-    msgHTML(null, images.forbidden, 'Access denied', $html, 'center', '/');
+    msgHTML(null, images.forbidden, '访问失败', $html, 'center', '/');
 
     /*
         it immediately stops the execution of the current function and jumps to the nearest enclosing try...catch block or, 
@@ -3283,8 +3283,8 @@ function checkShareScreen() {
             icon: 'question',
             text: '你想共享屏幕吗？',
             showDenyButton: true,
-            confirmButtonText: `Yes`,
-            denyButtonText: `No`,
+            confirmButtonText: `确定`,
+            denyButtonText: `取消`,
             showClass: { popup: 'animate__animated animate__fadeInDown' },
             hideClass: { popup: 'animate__animated animate__fadeOutUp' },
         }).then((result) => {
@@ -4326,7 +4326,7 @@ function handlePictureInPicture(btnId, videoId, peerId) {
                 (myVideoStatus && myVideoStatus.className === className.videoOff) ||
                 (remoteVideoStatus && remoteVideoStatus.className === className.videoOff)
             ) {
-                return msgPopup('warning', 'Prohibit Picture-in-Picture (PIP) on disabled video', 'top-end', 6000);
+                return msgPopup('warning', '禁止在禁用视频上使用画中画 (PIP) 功能。', 'top-end', 6000);
             }
             video.requestPictureInPicture().catch((error) => {
                 console.error('Failed to enter Picture-in-Picture mode:', error);
@@ -4847,8 +4847,8 @@ function setChatRoomBtn() {
         playSound('switch');
         showChatOnMessage = e.currentTarget.checked;
         showChatOnMessage
-            ? msgPopup('info', 'Chat will be shown, when you receive a new message', 'top-end', 3000)
-            : msgPopup('info', 'Chat not will be shown, when you receive a new message', 'top-end', 3000);
+            ? msgPopup('info', '收到新消息时，聊天记录将会显示。', 'top-end', 3000)
+            : msgPopup('info', '收到新消息时，聊天记录将不会显示。', 'top-end', 3000);
         lsSettings.show_chat_on_msg = showChatOnMessage;
         lS.setSettings(lsSettings);
     });
@@ -4859,8 +4859,8 @@ function setChatRoomBtn() {
             playSound('switch');
             speechInMessages = e.currentTarget.checked;
             speechInMessages
-                ? msgPopup('info', 'When You receive a new message, it will be converted into speech', 'top-end', 3000)
-                : msgPopup('info', 'You have disabled speech messages', 'top-end', 3000);
+                ? msgPopup('info', '当您收到新消息时，它会被转换为语音。', 'top-end', 3000)
+                : msgPopup('info', '您已禁用语音消息。', 'top-end', 3000);
             lsSettings.speech_in_msg = speechInMessages;
             lS.setSettings(lsSettings);
         });
@@ -6423,7 +6423,7 @@ function shareRoomByEmail() {
         title: '选择日期和时间',
         html: '<input type="text" id="datetimePicker" class="flatpickr" />',
         showCancelButton: true,
-        confirmButtonText: 'OK',
+        confirmButtonText: '确定',
         cancelButtonColor: 'red',
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
@@ -6431,10 +6431,10 @@ function shareRoomByEmail() {
             const roomURL = getRoomURL();
             const newLine = '%0D%0A%0D%0A';
             const selectedDateTime = document.getElementById('datetimePicker').value;
-            const roomPassword = isRoomLocked && thisRoomPassword ? 'Password: ' + thisRoomPassword + newLine : '';
+            const roomPassword = isRoomLocked && thisRoomPassword ? '密码: ' + thisRoomPassword + newLine : '';
             const email = '';
-            const emailSubject = `Please join our MiroTalk P2P Video Chat Meeting`;
-            const emailBody = `The meeting is scheduled at: ${newLine} DateTime: ${selectedDateTime} ${newLine}${roomPassword}Click to join: ${roomURL} ${newLine}`;
+            const emailSubject = `请加入我们的MiroTalk点对点视频聊天会议。`;
+            const emailBody = `会议安排在: ${newLine} 时间: ${selectedDateTime} ${newLine}${roomPassword}点击加入: ${roomURL} ${newLine}`;
             document.location = 'mailto:' + email + '?subject=' + emailSubject + '&body=' + emailBody;
         },
     });
@@ -7120,9 +7120,9 @@ function recordingOptions(options, audioMixerTracks) {
         showCancelButton: true,
         cancelButtonColor: 'red',
         denyButtonColor: 'green',
-        confirmButtonText: `Camera`,
-        denyButtonText: `Screen/Window`,
-        cancelButtonText: `Cancel`,
+        confirmButtonText: `相机`,
+        denyButtonText: `屏幕/窗口`,
+        cancelButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -7769,8 +7769,8 @@ function cleanMessages() {
         text: '清理聊天消息？',
         imageUrl: images.delete,
         showDenyButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
+        confirmButtonText: `确定`,
+        denyButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -7801,8 +7801,8 @@ function cleanCaptions() {
         title: '清理所有字幕？',
         imageUrl: images.delete,
         showDenyButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
+        confirmButtonText: `确定`,
+        denyButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -8226,8 +8226,8 @@ function deleteMessage(id) {
         text: '删除这条消息？',
         imageUrl: images.delete,
         showDenyButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
+        confirmButtonText: `确定`,
+        denyButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -8248,7 +8248,7 @@ function copyToClipboard(id) {
     navigator.clipboard
         .writeText(text)
         .then(() => {
-            msgPopup('success', 'Message copied!', 'top-end', 1000);
+            msgPopup('success', '消息已复制！', 'top-end', 1000);
         })
         .catch((err) => {
             msgPopup('error', err, 'top', 2000);
@@ -9006,7 +9006,7 @@ function handlePeerAudioBtn(peer_id) {
         if (peerAudioBtn.className === className.audioOn) {
             isPresenter
                 ? disablePeer(peer_id, 'audio')
-                : msgPopup('warning', 'Only the presenter can mute participants', 'top-end', 4000);
+                : msgPopup('warning', '只有主持人可以静音参与者。', 'top-end', 4000);
         }
     };
 }
@@ -9022,7 +9022,7 @@ function handlePeerVideoBtn(peer_id) {
         if (peerVideoBtn.className === className.videoOn) {
             isPresenter
                 ? disablePeer(peer_id, 'video')
-                : msgPopup('warning', 'Only the presenter can hide participants', 'top-end', 4000);
+                : msgPopup('warning', '只有主持人可以隐藏参与者。', 'top-end', 4000);
         }
     };
 }
@@ -9053,7 +9053,7 @@ function sendPrivateMsgToPeer(toPeerId, toPeerName) {
         title: '发送私信',
         input: 'text',
         showCancelButton: true,
-        confirmButtonText: `Send`,
+        confirmButtonText: `发送`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -9407,7 +9407,7 @@ function disableAllPeers(element) {
                 : "一旦隐藏，你就无法再取消隐藏，但他们可以在任何时候自行取消隐藏。",
         showDenyButton: true,
         confirmButtonText: element == 'audio' ? `Mute` : `Hide`,
-        denyButtonText: `Cancel`,
+        denyButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -9442,8 +9442,8 @@ function ejectEveryone() {
         title: '除了你自己，把所有人都踢出吗？',
         text: '确定要将所有参与者从房间中踢出吗？',
         showDenyButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
+        confirmButtonText: `确定`,
+        denyButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -9473,7 +9473,7 @@ function disablePeer(peer_id, element) {
                 : "一旦被隐藏，你将无法再取消隐藏，但它们可以在任何时候自行取消隐藏。",
         showDenyButton: true,
         confirmButtonText: element == 'audio' ? `Mute` : `Hide`,
-        denyButtonText: `Cancel`,
+        denyButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -9521,9 +9521,9 @@ function handleRoomAction(config, emit = false) {
                     background: swBg,
                     imageUrl: images.locked,
                     input: 'text',
-                    inputPlaceholder: 'Set Room password',
-                    confirmButtonText: `OK`,
-                    denyButtonText: `Cancel`,
+                    inputPlaceholder: '设置房间密码',
+                    confirmButtonText: `确定`,
+                    denyButtonText: `取消`,
                     showClass: { popup: 'animate__animated animate__fadeInDown' },
                     hideClass: { popup: 'animate__animated animate__fadeOutUp' },
                     inputValidator: (pwd) => {
@@ -9596,7 +9596,7 @@ function handleRoomLocked() {
         title: '哎呀，房间密码错误',
         text: '房间被锁了，请尝试另外一间。',
         showDenyButton: false,
-        confirmButtonText: `Ok`,
+        confirmButtonText: `好的`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -9618,11 +9618,11 @@ function handleUnlockTheRoom() {
         title: '哎呀，房间被锁住了。',
         input: 'text',
         inputPlaceholder: '输入房间密码',
-        confirmButtonText: `OK`,
+        confirmButtonText: `确定`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
         inputValidator: (pwd) => {
-            if (!pwd) return 'Please enter the Room password';
+            if (!pwd) return '请输入房间密码';
             thisRoomPassword = pwd;
         },
     }).then(() => {
@@ -9803,7 +9803,7 @@ function whiteboardAddObj(type) {
                 title: '图像URL',
                 input: 'text',
                 showCancelButton: true,
-                confirmButtonText: 'OK',
+                confirmButtonText: '确定',
                 showClass: { popup: 'animate__animated animate__fadeInDown' },
                 hideClass: { popup: 'animate__animated animate__fadeOutUp' },
             }).then((result) => {
@@ -9914,8 +9914,8 @@ function setupFileSelection(title, accept, renderToCanvas) {
             dropArea.addEventListener('drop', handleDrop);
         },
         showDenyButton: true,
-        confirmButtonText: `OK`,
-        denyButtonText: `Cancel`,
+        confirmButtonText: `确定`,
+        denyButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -10278,8 +10278,8 @@ function confirmCleanBoard() {
         title: '清除白板',
         text: '你确定要清除白板吗？',
         showDenyButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
+        confirmButtonText: `确定`,
+        denyButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -10567,7 +10567,7 @@ function selectFileToShare(peer_id, broadcast = false) {
         `,
         inputAttributes: {
             accept: fileSharingInput,
-            'aria-label': 'Select file',
+            'aria-label': '选择文件',
         },
         didOpen: () => {
             const dropArea = getId('dropArea');
@@ -10577,8 +10577,8 @@ function selectFileToShare(peer_id, broadcast = false) {
             dropArea.addEventListener('drop', handleDrop);
         },
         showDenyButton: true,
-        confirmButtonText: `Send`,
-        denyButtonText: `Cancel`,
+        confirmButtonText: `发送`,
+        denyButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -10764,8 +10764,8 @@ function endDownload() {
                 imageUrl: e.target.result,
                 imageAlt: 'mirotalk-file-img-download',
                 showDenyButton: true,
-                confirmButtonText: `Save`,
-                denyButtonText: `Cancel`,
+                confirmButtonText: `保存`,
+                denyButtonText: `取消`,
                 showClass: { popup: 'animate__animated animate__fadeInDown' },
                 hideClass: { popup: 'animate__animated animate__fadeOutUp' },
             }).then((result) => {
@@ -10785,8 +10785,8 @@ function endDownload() {
             title: '接收文件',
             text: incomingFileInfo.file.fileName + ' size ' + bytesToSize(incomingFileInfo.file.fileSize),
             showDenyButton: true,
-            confirmButtonText: `Save`,
-            denyButtonText: `Cancel`,
+            confirmButtonText: `保存`,
+            denyButtonText: `取消`,
             showClass: { popup: 'animate__animated animate__fadeInDown' },
             hideClass: { popup: 'animate__animated animate__fadeOutUp' },
         }).then((result) => {
@@ -10830,7 +10830,7 @@ function sendVideoUrl(peer_id = null) {
         text: '粘贴视频或音频URL',
         input: 'text',
         showCancelButton: true,
-        confirmButtonText: `Share`,
+        confirmButtonText: `分享`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -11018,7 +11018,7 @@ function handlePeerKickOutBtn(peer_id) {
     peerKickOutBtn.addEventListener('click', (e) => {
         isPresenter
             ? kickOut(peer_id)
-            : msgPopup('warning', 'Only the presenter can eject participants', 'top-end', 4000);
+            : msgPopup('warning', '只有主持人可以踢出参与者。', 'top-end', 4000);
     });
 }
 
@@ -11036,8 +11036,8 @@ function kickOut(peer_id) {
         title: '踢出 ' + pName,
         text: '你确定要将这个参与者移出吗？',
         showDenyButton: true,
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
+        confirmButtonText: `确定`,
+        denyButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
@@ -11080,8 +11080,8 @@ function handleCaptionActions(config) {
                 imageUrl: images.caption,
                 title: '开启字幕',
                 text: `${peer_name} 想为这个会话开启字幕。您希望启用吗？`,
-                confirmButtonText: `Yes`,
-                denyButtonText: `No`,
+                confirmButtonText: `确定`,
+                denyButtonText: `取消`,
                 showClass: { popup: 'animate__animated animate__fadeInDown' },
                 hideClass: { popup: 'animate__animated animate__fadeOutUp' },
             }).then((result) => {
@@ -11122,7 +11122,7 @@ function handleKickedOut(config) {
         background: swBg,
         position: 'center',
         imageUrl: images.leave,
-        title: 'Kicked out!',
+        title: '被踢出去了！',
         html:
             `<h2 style="color: #FF2D00;">` +
             `用户 ` +
@@ -11195,7 +11195,7 @@ function showAbout() {
                         </a>
                         <br /><br />
                         <hr />
-                        <span>&copy; 2025 MiroTalk P2P, all rights reserved</span>
+                        <span>&copy; 2025 MiroTalk P2P，保留所有权利。</span>
                         <hr />
                         `
                 }
@@ -11230,8 +11230,8 @@ function leaveFeedback() {
         imageUrl: images.feedback,
         title: '留下反馈',
         text: '你想要对 MiroTalk 进行评分吗？',
-        confirmButtonText: `Yes`,
-        denyButtonText: `No`,
+        confirmButtonText: `确定`,
+        denyButtonText: `取消`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
         hideClass: { popup: 'animate__animated animate__fadeOutUp' },
     }).then((result) => {
