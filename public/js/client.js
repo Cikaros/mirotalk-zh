@@ -15,7 +15,7 @@
  * @license For commercial use or closed source, contact us at license.mirotalk@gmail.com or purchase directly from CodeCanyon
  * @license CodeCanyon: https://codecanyon.net/item/mirotalk-p2p-webrtc-realtime-video-conferences/38376661
  * @author  Miroslav Pejic - miroslav.pejic.85@gmail.com
- * @version 1.5.05
+ * @version 1.5.24
  *
  */
 
@@ -51,6 +51,7 @@ const images = {
     avatar: '../images/mirotalk-logo.png',
     recording: '../images/recording.png',
     poster: '../images/loader.gif',
+    geoLocation: '../images/geolocation.png',
 }; // nice free icon: https://www.iconfinder.com
 
 const className = {
@@ -75,6 +76,7 @@ const className = {
     fsOn: 'fas fa-compress-alt',
     fsOff: 'fas fa-expand-alt',
     msgPrivate: 'fas fa-paper-plane',
+    geoLocation: 'fas fa-location-dot',
     shareFile: 'fas fa-upload',
     shareVideoAudio: 'fab fa-youtube',
     kickOut: 'fas fa-sign-out-alt',
@@ -687,6 +689,29 @@ let surveyURL = 'https://www.questionpro.com/t/AUs7VZq00L';
 let redirectActive = false;
 let redirectURL = '/newcall';
 
+// GeoLocation
+const notificationService = new NotificationService({ Swal, swBg, images, playSound });
+const geoService = GeoService;
+let geo;
+
+/**
+ * Load GeoLocation service
+ * @returns {void}
+ */
+function loadGeo() {
+    geo = new PeerGeoLocation({
+        room_id: roomId,
+        peer_name: myPeerName,
+        peer_id: myPeerId,
+        peer_uuid: myPeerUUID,
+        sendToServer,
+        msgPopup,
+        notificationService,
+        geoService,
+        openURL,
+    });
+}
+
 /**
  * Load all Html elements by Id
  */
@@ -980,7 +1005,7 @@ function makeId(length) {
  */
 function getUUID() {
     const uuid4 = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-        (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16),
+        (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
     );
     if (window.localStorage.uuid) {
         return window.localStorage.uuid;
@@ -1169,6 +1194,7 @@ function initClientPeer() {
     signalingSocket.on('peerName', handlePeerName);
     signalingSocket.on('peerStatus', handlePeerStatus);
     signalingSocket.on('peerAction', handlePeerAction);
+    signalingSocket.on('cmd', handleCmd);
     signalingSocket.on('message', handleMessage);
     signalingSocket.on('wbCanvasToJson', handleJsonToWbCanvas);
     signalingSocket.on('whiteboardAction', handleWhiteboardAction);
@@ -1255,7 +1281,7 @@ function handleServerInfo(config) {
     surveyURL = survey.url;
 
     // Get redirect settings from server
-    (redirectActive = redirect.active), (redirectURL = redirect.url);
+    ((redirectActive = redirect.active), (redirectURL = redirect.url));
 
     // Limit room to n peers
     if (userLimits.active && peers_count > userLimits.count) {
@@ -1336,14 +1362,11 @@ function roomIsBusy() {
 function handleRules(isPresenter) {
     console.log('14. Peer isPresenter: ' + isPresenter + ' Reconnected to signaling server: ' + isPeerReconnected);
     if (!isPresenter) {
-        //buttons.main.showShareRoomBtn = false;
-        buttons.settings.showMicOptionsBtn = false;
         buttons.settings.showTabRoomParticipants = false;
         buttons.settings.showTabRoomSecurity = false;
         buttons.settings.showTabEmailInvitation = false;
-        // buttons.remote.audioBtnClickAllowed = false;
-        // buttons.remote.videoBtnClickAllowed = false;
         buttons.remote.showKickOutBtn = false;
+        buttons.remote.showGeoLocationBtn = false;
         buttons.whiteboard.whiteboardLockBtn = false;
         //...
     } else {
@@ -1398,7 +1421,7 @@ function handleButtonsRule() {
     elemDisplay(captionTogglePin, !isMobileDevice && buttons.caption.showTogglePinBtn);
     elemDisplay(captionMaxBtn, !isMobileDevice && buttons.caption.showMaxBtn);
     // Settings
-    elemDisplay(dropDownMicOptions, buttons.settings.showMicOptionsBtn && isPresenter); // auto-detected
+    elemDisplay(dropDownMicOptions, buttons.settings.showMicOptionsBtn || isPresenter); // auto-detected
     elemDisplay(captionEveryoneBtn, buttons.settings.showCaptionEveryoneBtn);
     elemDisplay(muteEveryoneBtn, buttons.settings.showMuteEveryoneBtn);
     elemDisplay(hideEveryoneBtn, buttons.settings.showHideEveryoneBtn);
@@ -1438,6 +1461,23 @@ async function getButtons() {
     } catch (error) {
         console.error('AXIOS GET CONFIG ERROR', error.message);
     }
+}
+
+/**
+ * Get user name from OIDC profile
+ * @returns {string} Peer Name
+ */
+async function getUserName() {
+    try {
+        const { data: profile } = await axios.get('/profile', { timeout: 5000 });
+        if (profile && profile.name) {
+            console.log('AXIOS GET OIDC Profile retrieved successfully', profile);
+            window.localStorage.peer_name = profile.name;
+        }
+    } catch (error) {
+        console.error('AXIOS OIDC Error fetching profile', error.message || error);
+    }
+    return window.localStorage.peer_name || '';
 }
 
 /**
@@ -1508,6 +1548,8 @@ async function whoAreYou() {
 
     initVideoContainerShow(myVideoStatus);
 
+    window.localStorage.peer_name = await getUserName();
+
     Swal.fire({
         allowOutsideClick: false,
         allowEscapeKey: false,
@@ -1516,7 +1558,7 @@ async function whoAreYou() {
         position: 'center',
         input: 'text',
         inputPlaceholder: '输入你的邮箱或姓名',
-        inputAttributes: { maxlength: 32, id: 'usernameInput' },
+        inputAttributes: { maxlength: 254, id: 'usernameInput' },
         inputValue: window.localStorage.peer_name ? window.localStorage.peer_name : '',
         html: initUser, // inject html
         confirmButtonText: `加入会议`,
@@ -1528,8 +1570,11 @@ async function whoAreYou() {
         },
         inputValidator: async (value) => {
             if (!value) return '请输入您的电子邮件或姓名。';
-            // Long name
-            if (value.length > 30) return '名称不得超过30个字符。';
+            // Long email or name
+            const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            if ((isEmail && value.length > 254) || (!isEmail && value.length > 32)) {
+                return isEmail ? '邮箱不得超过254个字符。' : '名称不得超过32个字符。';
+            }
 
             // prevent xss execution itself
             myPeerName = filterXSS(value);
@@ -1964,6 +2009,7 @@ async function whoAreYouJoin() {
     setPeerChatAvatarImgName('right', myPeerName, myPeerAvatar);
     joinToChannel();
     handleHideMe(isHideMeActive);
+    loadGeo();
 }
 
 /**
@@ -2830,7 +2876,7 @@ async function enumerateAudioDevices(stream) {
                 }
                 if (!el) return;
                 await addChild(device, [el, eli]);
-            }),
+            })
         )
         .then(async () => {
             await stopTracks(stream);
@@ -2864,7 +2910,7 @@ async function enumerateVideoDevices(stream) {
                 }
                 if (!el) return;
                 await addChild(device, [el, eli]);
-            }),
+            })
         )
         .then(async () => {
             await stopTracks(stream);
@@ -3033,7 +3079,7 @@ function handleMediaError(mediaType, err) {
         if none exists, it interrupts the script execution and displays an error message in the console.
     */
     throw new Error(
-        `Access denied for ${mediaType} device [${err.name}]: ${errMessage} check the common getUserMedia errors: https://blog.addpipe.com/common-getusermedia-errors/`,
+        `Access denied for ${mediaType} device [${err.name}]: ${errMessage} check the common getUserMedia errors: https://blog.addpipe.com/common-getusermedia-errors/`
     );
 }
 
@@ -3336,6 +3382,7 @@ async function loadRemoteMediaStream(stream, peers, peer_id, kind) {
             const remoteVideoAudioUrlBtn = document.createElement('button');
             const remoteFileShareBtn = document.createElement('button');
             const remotePrivateMsgBtn = document.createElement('button');
+            const remoteGeoLocationBtn = document.createElement('button');
             const remotePeerKickOut = document.createElement('button');
             const remoteVideoToImgBtn = document.createElement('button');
             const remoteVideoFullScreenBtn = document.createElement('button');
@@ -3388,6 +3435,10 @@ async function loadRemoteMediaStream(stream, peers, peer_id, kind) {
             remotePrivateMsgBtn.setAttribute('id', peer_id + '_privateMsg');
             remotePrivateMsgBtn.className = className.msgPrivate;
 
+            // remote geo location
+            remoteGeoLocationBtn.setAttribute('id', peer_id + '_geoLocation');
+            remoteGeoLocationBtn.className = className.geoLocation;
+
             // remote share file
             remoteFileShareBtn.setAttribute('id', peer_id + '_shareFile');
             remoteFileShareBtn.className = className.shareFile;
@@ -3439,6 +3490,7 @@ async function loadRemoteMediaStream(stream, peers, peer_id, kind) {
                 setTippy(remoteAudioVolume, '🔊 音量', 'top');
                 setTippy(remoteVideoAudioUrlBtn, '发送视频或音频', 'bottom');
                 setTippy(remotePrivateMsgBtn, '发送私信', 'bottom');
+                setTippy(remoteGeoLocationBtn, '获取地理位置', 'bottom');
                 setTippy(remoteFileShareBtn, '发送文件', 'bottom');
                 setTippy(remoteVideoToImgBtn, '拍摄快照', 'bottom');
                 setTippy(remotePeerKickOut, '踢出', 'bottom');
@@ -3488,6 +3540,7 @@ async function loadRemoteMediaStream(stream, peers, peer_id, kind) {
                 remoteExpandContainerDiv.appendChild(remoteVideoZoomOutBtn);
             }
             buttons.remote.showPrivateMessageBtn && remoteExpandContainerDiv.appendChild(remotePrivateMsgBtn);
+            buttons.remote.showGeoLocationBtn && remoteExpandContainerDiv.appendChild(remoteGeoLocationBtn);
             buttons.remote.showFileShareBtn && remoteExpandContainerDiv.appendChild(remoteFileShareBtn);
             buttons.remote.showShareVideoAudioBtn && remoteExpandContainerDiv.appendChild(remoteVideoAudioUrlBtn);
             buttons.remote.showKickOutBtn && remoteExpandContainerDiv.appendChild(remotePeerKickOut);
@@ -3590,6 +3643,8 @@ async function loadRemoteMediaStream(stream, peers, peer_id, kind) {
             // handle remote peers video on-off
             handlePeerVideoBtn(peer_id);
 
+            // handle remote geo location
+            buttons.remote.showGeoLocationBtn && handlePeerGeoLocation(peer_id, peer_name);
             // handle remote private messages
             buttons.remote.showPrivateMessageBtn && handlePeerPrivateMsg(peer_id, peer_name);
             // handle remote send file
@@ -5338,7 +5393,7 @@ async function documentPictureInPictureOpen() {
                             if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                                 console.log(
                                     `${observerName}: Element ${mutation.target.id} class changed:`,
-                                    mutation.target.className,
+                                    mutation.target.className
                                 );
                                 cloneVideoElements(); // Or other desired function
                             }
@@ -6113,31 +6168,20 @@ async function getVideoConstraints(videoQuality) {
  * Get audio constraints
  */
 async function getAudioConstraints() {
-    // For all guests
-    let constraints = {
+    // For presenter
+    const constraints = {
         audio: {
-            autoGainControl: true,
-            echoCancellation: true,
-            noiseSuppression: true,
+            autoGainControl: switchAutoGainControl.checked,
+            echoCancellation: switchEchoCancellation.checked,
+            noiseSuppression: switchNoiseSuppression.checked,
+            sampleRate: parseInt(sampleRateSelect.value),
+            sampleSize: parseInt(sampleSizeSelect.value),
+            channelCount: parseInt(channelCountSelect.value),
+            latency: parseInt(micLatencyRange.value),
+            volume: parseInt(micVolumeRange.value / 100),
         },
         video: false,
     };
-    // For presenter
-    if (isRulesActive && isPresenter) {
-        constraints = {
-            audio: {
-                autoGainControl: switchAutoGainControl.checked,
-                echoCancellation: switchEchoCancellation.checked,
-                noiseSuppression: switchNoiseSuppression.checked,
-                sampleRate: parseInt(sampleRateSelect.value),
-                sampleSize: parseInt(sampleSizeSelect.value),
-                channelCount: parseInt(channelCountSelect.value),
-                latency: parseInt(micLatencyRange.value),
-                volume: parseInt(micVolumeRange.value / 100),
-            },
-            video: false,
-        };
-    }
     console.log('Audio constraints', constraints);
     return constraints;
 }
@@ -7093,7 +7137,7 @@ function startStreamRecording() {
             audioStreams
                 .getTracks()
                 .filter((track) => track.kind === 'audio')
-                .map((track) => new MediaStream([track])),
+                .map((track) => new MediaStream([track]))
         );
 
         const audioMixerTracks = audioMixerStreams.getTracks();
@@ -7277,7 +7321,7 @@ function notifyRecording(fromId, from, fromAvatar, action) {
             <br /><br />
             ${recAgree}`,
             'top-end',
-            6000,
+            6000
         );
     }
 }
@@ -8459,12 +8503,14 @@ function isValidHttpURL(input) {
  * @param {string} url to check
  * @returns {boolean} true/false
  */
-async function isImageURL(url) {
+function isImageURL(input) {
+    if (!input || typeof input !== 'string') return false;
     try {
-        const response = await fetch(url, { method: 'HEAD' });
-        const contentType = response.headers.get('content-type');
-        return contentType && contentType.startsWith('image/');
-    } catch {
+        const url = new URL(input);
+        return ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff', '.svg'].some((ext) =>
+            url.pathname.toLowerCase().endsWith(ext)
+        );
+    } catch (e) {
         return false;
     }
 }
@@ -8536,7 +8582,7 @@ function getIframe(text) {
     iframe.setAttribute('frameborder', '0');
     iframe.setAttribute(
         'allow',
-        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
     );
     iframe.setAttribute('allowfullscreen', 'allowfullscreen');
     div.appendChild(iframe);
@@ -8636,7 +8682,7 @@ async function getChatGPTmessage(msg) {
                 appendMessage('ChatGPT', leftChatAvatar, 'left', message, true);
                 cleanMessageInput();
                 speechInMessages ? speechMessage(true, 'ChatGPT', message) : playSound('message');
-            }.bind(this),
+            }.bind(this)
         )
         .catch((err) => {
             console.log('ChatGPT error:', err);
@@ -9027,6 +9073,24 @@ function handlePeerVideoBtn(peer_id) {
     };
 }
 
+function handlePeerGeoLocation(peer_id) {
+    const remoteGeoLocationBtn = getId(peer_id + '_geoLocation');
+    remoteGeoLocationBtn.onclick = () => {
+        isPresenter
+            ? geo.askPeerGeoLocation(peer_id)
+            : msgPopup('warning', 'Only the presenter can ask geolocation to the participants', 'top-end', 4000);
+    };
+}
+
+function handlePeerGeoLocation(peer_id) {
+    const remoteGeoLocationBtn = getId(peer_id + '_geoLocation');
+    remoteGeoLocationBtn.onclick = () => {
+        isPresenter
+            ? geo.askPeerGeoLocation(peer_id)
+            : msgPopup('warning', 'Only the presenter can ask geolocation to the participants', 'top-end', 4000);
+    };
+}
+
 /**
  * Send Private Message to specific peer
  * @param {string} peer_id socket.id
@@ -9189,6 +9253,31 @@ function handlePeerAction(config) {
         case 'ejectAll':
             handleKickedOut(config);
             break;
+        default:
+            break;
+    }
+}
+
+/**
+ * Handle commands from the server
+ * @param {object} config data
+ */
+function handleCmd(config) {
+    console.log('Handle cmd: ', config);
+
+    const { action, data } = config;
+
+    switch (action) {
+        case 'geoLocation':
+            // Peer is requesting your location
+            geo.confirmPeerGeoLocation(data);
+            break;
+        case 'geoLocationOK':
+        case 'geoLocationKO':
+            // Peer responded with their location or an error/denial
+            geo.handleGeoPeerLocation(config);
+            break;
+        //....
         default:
             break;
     }
@@ -10042,7 +10131,7 @@ async function loadPDF(pdfData, pages) {
                     await page.render(renderContext).promise;
                     return canvas;
                 });
-            }),
+            })
         );
         return canvases.filter((canvas) => canvas !== null);
     } catch (error) {
@@ -10065,7 +10154,7 @@ async function pdfToImage(pdfData, canvas) {
                 new fabric.Image(await c, {
                     scaleX: scale,
                     scaleY: scale,
-                }),
+                })
             );
         });
     } catch (error) {
@@ -10668,7 +10757,7 @@ function sendFileInformations(file, peer_id, broadcast = false) {
                 <li>Name: ${fileToSend.name}</li>
                 <li>Size: ${bytesToSize(fileToSend.size)}</li>
             </ul>`,
-            false,
+            false
         );
 
         // send some metadata about our file to peers in the room
@@ -10729,7 +10818,7 @@ function handleFileInfo(config) {
             <li>Size: ${bytesToSize(incomingFileInfo.file.fileSize)}</li>
         </ul>`,
         !incomingFileInfo.broadcast,
-        incomingFileInfo.peer_id,
+        incomingFileInfo.peer_id
     );
     receiveFileInfo.innerText = fileToReceiveInfo;
     elemDisplay(receiveFileDiv, true);
@@ -11160,7 +11249,7 @@ function showAbout() {
     Swal.fire({
         background: swBg,
         position: 'center',
-        title: brand.about?.title && brand.about.title.trim() !== '' ? brand.about.title : 'WebRTC P2P v1.5.05',
+        title: brand.about?.title && brand.about.title.trim() !== '' ? brand.about.title : 'WebRTC P2P v1.5.24',
         imageUrl: brand.about?.imageUrl && brand.about.imageUrl.trim() !== '' ? brand.about.imageUrl : images.about,
         customClass: { image: 'img-about' },
         html: `

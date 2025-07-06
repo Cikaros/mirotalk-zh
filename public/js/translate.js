@@ -23,7 +23,7 @@ function googleTranslateElementInit() {
             pageLanguage: 'zh',
             autoDisplay: false, // Prevent default popup
         },
-        'google_translate_element',
+        'google_translate_element'
     );
 
     const language = brand?.app?.language || 'zh';

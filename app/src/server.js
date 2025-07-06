@@ -45,7 +45,7 @@ dependencies: {
  * @license For commercial use or closed source, contact us at license.mirotalk@gmail.com or purchase directly from CodeCanyon
  * @license CodeCanyon: https://codecanyon.net/item/mirotalk-p2p-webrtc-realtime-video-conferences/38376661
  * @author  Miroslav Pejic - miroslav.pejic.85@gmail.com
- * @version 1.5.05
+ * @version 1.5.24
  *
  */
 
@@ -217,7 +217,7 @@ const redirectURL = process.env.REDIRECT_URL || '/newcall';
 const Sentry = require('@sentry/node');
 const sentryEnabled = getEnvBoolean(process.env.SENTRY_ENABLED);
 const sentryDSN = process.env.SENTRY_DSN;
-const sentryTracesSampleRate = process.env.SENTRY_TRACES_SAMPLE_RATE;
+const sentryTracesSampleRate = parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || '0.0');
 
 // Slack API
 const CryptoJS = require('crypto-js');
@@ -226,20 +226,38 @@ const slackEnabled = getEnvBoolean(process.env.SLACK_ENABLED);
 const slackSigningSecret = process.env.SLACK_SIGNING_SECRET;
 
 // Setup sentry client
-if (sentryEnabled) {
+if (sentryEnabled && typeof sentryDSN === 'string' && sentryDSN.trim()) {
+    log.info('Sentry monitoring started...');
+
     Sentry.init({
         dsn: sentryDSN,
-        integrations: [
-            Sentry.captureConsoleIntegration({
-                // ['log', 'info', 'warn', 'error', 'debug', 'assert']
-                levels: ['warn', 'error'],
-            }),
-        ],
-        // Set tracesSampleRate to 1.0 to capture 100%
-        // of transactions for performance monitoring.
-        // We recommend adjusting this value in production
         tracesSampleRate: sentryTracesSampleRate,
     });
+
+    const logLevels = process.env.SENTRY_LOG_LEVELS
+        ? process.env.SENTRY_LOG_LEVELS.split(',').map((level) => level.trim())
+        : ['error'];
+
+    const originalConsole = {};
+    logLevels.forEach((level) => {
+        originalConsole[level] = console[level];
+        console[level] = function (...args) {
+            switch (level) {
+                case 'warn':
+                    Sentry.captureMessage(args.join(' '), 'warning');
+                    break;
+                case 'error':
+                    args[0] instanceof Error
+                        ? Sentry.captureException(args[0])
+                        : Sentry.captureException(new Error(args.join(' ')));
+                    break;
+            }
+            originalConsole[level].apply(console, args);
+        };
+    });
+
+    // log.error('Sentry error', { foo: 'bar' });
+    // log.warn('Sentry warning');
 }
 
 // OpenAI/ChatGPT
@@ -347,7 +365,7 @@ const mattermostCfg = {
     token: process.env.MATTERMOST_TOKEN,
     roomTokenExpire: process.env.MATTERMOST_ROOM_TOKEN_EXPIRE,
     encryptionKey: process.env.JWT_KEY,
-    security: (hostCfg.protected || OIDC.enabled),
+    security: hostCfg.protected || OIDC.enabled,
     api_disabled: api_disabled,
 };
 
@@ -488,9 +506,10 @@ if (OIDC.enabled) {
 // Route to display user information
 app.get('/profile', OIDCAuth, (req, res) => {
     if (OIDC.enabled) {
+        log.debug('OIDC User profile requested', req.oidc.user);
         return res.json(req.oidc.user); // Send user information as JSON
     }
-    res.sendFile(views.notFound);
+    return res.json({ profile: false });
 });
 
 // Authentication Callback Route
@@ -1064,7 +1083,7 @@ server.listen(port, null, () => {
 	╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝      ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝ started...
 
 	`,
-        'font-family:monospace',
+        'font-family:monospace'
     );
 
     // https tunnel
@@ -1509,6 +1528,42 @@ io.sockets.on('connect', async (socket) => {
         const data = checkXSS(message);
         log.debug('Got message', data);
         await sendToRoom(data.room_id, socket.id, 'message', data);
+    });
+
+    /**
+     * Relay commands to peers or specific peer in the same room
+     * @param {Object} cfg - The configuration object containing command details.
+     * @param {string} cfg.action - The action to be performed (e.g., 'geoLocation').
+     * @param {boolean} cfg.send_to_all - Whether to send the command to all peers in the room.
+     * @param {Object} cfg.data - The data associated with the command.
+     */
+    socket.on('cmd', async (cfg) => {
+        const config = checkXSS(cfg);
+
+        const { action, send_to_all, data } = config;
+
+        const { room_id, peer_id, peer_name, peer_uuid, to_peer_id } = data;
+
+        log.info('cmd', config);
+
+        // Only the presenter can do this actions
+        const presenterActions = ['geoLocation'];
+        if (presenterActions.some((v) => action === v)) {
+            // Check if peer is presenter
+            const isPresenter = isPeerPresenter(room_id, peer_id, peer_name, peer_uuid);
+            // if not presenter do nothing
+            if (!isPresenter) return;
+        }
+
+        if (send_to_all) {
+            log.debug('[' + socket.id + '] emit cmd to [room_id: ' + room_id + ']', config);
+
+            await sendToRoom(room_id, socket.id, 'cmd', config);
+        } else {
+            log.debug('[' + socket.id + '] emit cmd to [' + to_peer_id + '] from room_id [' + room_id + ']');
+
+            await sendToPeer(to_peer_id, sockets, 'cmd', config);
+        }
     });
 
     /**

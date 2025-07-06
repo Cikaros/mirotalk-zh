@@ -117,7 +117,6 @@ class MattermostController {
 
             this.authService.login();
             this.setupRoutes();
-
         } catch (error) {
             log.error('MattermostController disabled due to config error:', error.message);
         }

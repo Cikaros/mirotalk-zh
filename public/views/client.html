@@ -278,7 +278,7 @@
                                 id="searchPeerBarName"
                                 type="text"
                                 placeholder=" 🔍 Search peer by name..."
-                                maxlength="32"
+                                maxlength="254"
                                 name="search"
                             />
                         </div>
@@ -857,7 +857,7 @@
                             </div>
                             <br /><br />
                             <div>
-                                <input id="myPeerNameSet" type="text" placeholder="更改名称..." maxlength="32" />
+                                <input id="myPeerNameSet" type="text" placeholder="更改名称..." maxlength="254" />
                                 <button id="myPeerNameSetBtn"><i class="fas fa-user-edit"></i>&nbsp;更改名称</button>
                             </div>
                         </div>
@@ -1109,7 +1109,7 @@
                 <button id="videoAudioCloseBtn" class="fas fa-times"></button>
             </div>
             <br />
-            <video id="videoAudioUrlElement" src="" autoplay controls></video>
+            <video id="videoAudioUrlElement" src="" autoplay playsinline controls></video>
         </div>
 
         <!-- End Video - Audio player -->
@@ -1173,6 +1173,7 @@
         <script defer src="../js/common.js"></script>
         <script defer src="../js/brand.js"></script>
         <script defer src="../js/buttons.js"></script>
+        <script defer src="../js/geoLocation.js"></script>
         <script defer src="../js/client.js"></script>
         <script defer src="../js/detectSpeaking.js"></script>
         <script defer src="../js/speechRecognition.js"></script>
