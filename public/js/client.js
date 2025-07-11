@@ -15,7 +15,7 @@
  * @license For commercial use or closed source, contact us at license.mirotalk@gmail.com or purchase directly from CodeCanyon
  * @license CodeCanyon: https://codecanyon.net/item/mirotalk-p2p-webrtc-realtime-video-conferences/38376661
  * @author  Miroslav Pejic - miroslav.pejic.85@gmail.com
- * @version 1.5.27
+ * @version 1.5.30
  *
  */
 
@@ -7159,7 +7159,8 @@ function recordingOptions(options, audioMixerTracks) {
         background: swBg,
         position: 'top',
         imageUrl: images.recording,
-        title: '录音选项',
+        title: 'Recording options',
+        text: '选择您想要开始的录音类型。音频将从所有参与者处录制。',
         showDenyButton: true,
         showCancelButton: true,
         cancelButtonColor: 'red',
@@ -11249,7 +11250,7 @@ function showAbout() {
     Swal.fire({
         background: swBg,
         position: 'center',
-        title: brand.about?.title && brand.about.title.trim() !== '' ? brand.about.title : 'WebRTC P2P v1.5.27',
+        title: brand.about?.title && brand.about.title.trim() !== '' ? brand.about.title : 'WebRTC P2P v1.5.30',
         imageUrl: brand.about?.imageUrl && brand.about.imageUrl.trim() !== '' ? brand.about.imageUrl : images.about,
         customClass: { image: 'img-about' },
         html: `
@@ -11300,11 +11301,7 @@ function showAbout() {
  */
 function leaveRoom() {
     checkRecording();
-    if (surveyActive) {
-        leaveFeedback();
-    } else {
-        redirectOnLeave();
-    }
+    surveyActive ? leaveFeedback() : redirectOnLeave();
 }
 
 /**
@@ -11315,8 +11312,14 @@ function leaveFeedback() {
         allowOutsideClick: false,
         allowEscapeKey: false,
         showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonColor: 'green',
+        denyButtonColor: 'red',
+        cancelButtonColor: 'gray',
         background: swBg,
         imageUrl: images.feedback,
+        position: 'top',
+        cancelButtonText: `Cancel`,
         title: '留下反馈',
         text: '你想要对 MiroTalk 进行评分吗？',
         confirmButtonText: `确定`,
@@ -11326,7 +11329,7 @@ function leaveFeedback() {
     }).then((result) => {
         if (result.isConfirmed) {
             openURL(surveyURL);
-        } else {
+        } else if (result.isDenied) {
             redirectOnLeave();
         }
     });

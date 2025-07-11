@@ -1,10 +1,11 @@
-// volume-processor.js
+'use strict';
 class VolumeProcessor extends AudioWorkletProcessor {
     constructor(options) {
         super();
         this.threshold = options.processorOptions.threshold || 10;
         this.peerId = options.processorOptions.peerId || '';
         this.myAudioStatus = options.processorOptions.myAudioStatus || false;
+        this.silenceThreshold = options.processorOptions.silenceThreshold || 0.01;
     }
 
     process(inputs, outputs, parameters) {
@@ -26,6 +27,7 @@ class VolumeProcessor extends AudioWorkletProcessor {
         for (let i = 0; i < inputData.length; i++) {
             sum += inputData[i] * inputData[i];
         }
+
         const rms = Math.sqrt(sum / inputData.length);
         const volume = Math.max(0, Math.min(1, rms * 10));
         const finalVolume = Math.round(volume * 100);
@@ -40,10 +42,12 @@ class VolumeProcessor extends AudioWorkletProcessor {
         }
 
         // Send volume data for UI updates
-        this.port.postMessage({
-            type: 'volumeIndicator',
-            volume: volume,
-        });
+        if (volume > this.silenceThreshold) {
+            this.port.postMessage({
+                type: 'volumeIndicator',
+                volume: volume,
+            });
+        }
 
         return true;
     }
