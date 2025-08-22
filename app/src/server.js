@@ -45,7 +45,7 @@ dependencies: {
  * @license For commercial use or closed source, contact us at license.mirotalk@gmail.com or purchase directly from CodeCanyon
  * @license CodeCanyon: https://codecanyon.net/item/mirotalk-p2p-webrtc-realtime-video-conferences/38376661
  * @author  Miroslav Pejic - miroslav.pejic.85@gmail.com
- * @version 1.5.30
+ * @version 1.5.67
  *
  */
 
@@ -152,6 +152,7 @@ const hostCfg = {
     user_auth: userAuth,
     users: hostUsers,
     authenticated: !hostProtected,
+    maxRoomParticipants: parseInt(process.env.ROOM_MAX_PARTICIPANTS) || 1000,
 };
 
 // JWT config
@@ -181,6 +182,12 @@ const api_disabled = JSON.parse(apiDisabledString);
 const ngrok = require('@ngrok/ngrok');
 const ngrokEnabled = getEnvBoolean(process.env.NGROK_ENABLED);
 const ngrokAuthToken = process.env.NGROK_AUTH_TOKEN;
+
+// Handle WebHook
+const webhook = {
+    enabled: config?.webhook?.enabled || false,
+    url: config?.webhook?.url || 'http://localhost:8888/webhook-endpoint',
+};
 
 // Stun (https://bloggeek.me/webrtcglossary/stun/)
 // Turn (https://bloggeek.me/webrtcglossary/turn/)
@@ -392,6 +399,9 @@ const views = {
     stunTurn: path.join(__dirname, '../../', 'public/views/testStunTurn.html'),
 };
 
+// Branding configuration
+const brandHtmlInjection = config?.brand?.htmlInjection ?? true;
+
 // File to cache and inject custom HTML data like OG tags and any other elements.
 const filesPath = [views.landing, views.newCall, views.client, views.login];
 const htmlInjector = new HtmlInjector(filesPath, config?.brand || null);
@@ -537,14 +547,8 @@ app.get('/logout', (req, res) => {
 // main page
 app.get('/', OIDCAuth, (req, res) => {
     if (!OIDC.enabled && hostCfg.protected) {
-        const ip = getIP(req);
-        if (allowedIP(ip)) {
-            htmlInjector.injectHtml(views.landing, res);
-            hostCfg.authenticated = true;
-        } else {
-            hostCfg.authenticated = false;
-            res.redirect('/login');
-        }
+        hostCfg.authenticated = false;
+        res.redirect('/login');
     } else {
         return htmlInjector.injectHtml(views.landing, res);
     }
@@ -553,14 +557,8 @@ app.get('/', OIDCAuth, (req, res) => {
 // set new room name and join
 app.get('/newcall', OIDCAuth, (req, res) => {
     if (!OIDC.enabled && hostCfg.protected) {
-        const ip = getIP(req);
-        if (allowedIP(ip)) {
-            res.redirect('/');
-            hostCfg.authenticated = true;
-        } else {
-            hostCfg.authenticated = false;
-            res.redirect('/login');
-        }
+        hostCfg.authenticated = false;
+        res.redirect('/login');
     } else {
         htmlInjector.injectHtml(views.newCall, res);
     }
@@ -590,16 +588,29 @@ app.get(['/icetest'], (req, res) => {
     res.sendFile(views.stunTurn);
 });
 
+// Check if room active (exists)
+app.post('/isRoomActive', (req, res) => {
+    const { roomId } = checkXSS(req.body);
+
+    if (roomId && (hostCfg.protected || hostCfg.user_auth || OIDC.enabled)) {
+        const roomActive = Object.prototype.hasOwnProperty.call(peers, roomId);
+        if (roomActive) log.debug('isRoomActive', { roomId, roomActive });
+        res.status(200).json({ message: roomActive });
+    } else {
+        res.status(400).json({ message: 'Unauthorized' });
+    }
+});
+
 // Handle Direct join room with params
 app.get('/join/', async (req, res) => {
     if (Object.keys(req.query).length > 0) {
         log.debug('Request Query', req.query);
         /* 
-            http://localhost:3000/join?room=test&name=mirotalk&audio=1&video=1&screen=0&notify=0&hide=0
-            https://p2p.mirotalk.com/join?room=test&name=mirotalk&audio=1&video=1&screen=0&notify=0&hide=0
-            https://mirotalk.up.railway.app/join?room=test&name=mirotalk&audio=1&video=1&screen=0&notify=0&hide=0
+            http://localhost:3000/join?room=test&name=mirotalk&audio=1&video=1&screen=0&chat=1&notify=0&hide=0
+            https://p2p.mirotalk.com/join?room=test&name=mirotalk&audio=1&video=1&screen=0&chat=1&notify=0&hide=0
+            https://mirotalk.up.railway.app/join?room=test&name=mirotalk&audio=1&video=1&screen=0&chat=1&notify=0&hide=0
         */
-        const { room, name, audio, video, screen, notify, hide, token } = checkXSS(req.query);
+        const { room, name, audio, video, screen, chat, notify, hide, token } = checkXSS(req.query);
 
         if (!room) {
             log.warn('/join/params room empty', room);
@@ -734,7 +745,13 @@ app.post('/login', (req, res) => {
     const ip = getIP(req);
     log.debug(`Request login to host from: ${ip}`, req.body);
 
-    const { username, password } = checkXSS(req.body);
+    const safeBody = checkXSS(req.body) || {};
+    const { username, password } = safeBody;
+
+    if (!username || !password) {
+        log.warn('Login failed: missing username or password', req.body);
+        return res.status(400).json({ message: 'Missing username or password' });
+    }
 
     const isPeerValid = isAuthPeer(username, password);
 
@@ -769,7 +786,7 @@ app.get('/buttons', (req, res) => {
 
 // UI brand configuration
 app.get('/brand', (req, res) => {
-    res.status(200).json({ message: config && config.brand ? config.brand : false });
+    res.status(200).json({ message: config && config.brand && brandHtmlInjection ? config.brand : false });
 });
 
 // Join roomId redirect to /join?room=roomId
@@ -1027,6 +1044,7 @@ function getServerConfig(tunnel = false) {
         chatGPT_enabled: configChatGPT.enabled ? configChatGPT : false,
         slack_enabled: slackEnabled,
         mattermost_enabled: mattermostCfg.enabled ? mattermostCfg : false,
+        webhook: webhook.enabled ? webhook : false,
 
         // Monitoring and Logging
         sentry_enabled: sentryEnabled,
@@ -1130,7 +1148,7 @@ io.sockets.on('connect', async (socket) => {
     socket.on('disconnect', async (reason) => {
         removeIP(socket);
         for (let channel in socket.channels) {
-            await removePeerFrom(channel);
+            await removePeerFrom(channel, socket, reason);
         }
         log.debug('[' + socket.id + '] disconnected', { reason: reason });
         delete sockets[socket.id];
@@ -1383,6 +1401,7 @@ io.sockets.on('connect', async (socket) => {
                 active: redirectEnabled,
                 url: redirectURL,
             },
+            maxRoomParticipants: hostCfg.maxRoomParticipants,
             //...
         });
 
@@ -1395,6 +1414,16 @@ io.sockets.on('connect', async (socket) => {
                 os: osName ? `${osName} ${osVersion}` : '',
                 browser: browserName ? `${browserName} ${browserVersion}` : '',
             }); // .env EMAIL_ALERT=true
+        }
+
+        // Handle WebHook
+        if (webhook.enabled) {
+            // Trigger a POST request when a user joins
+            config.timestamp = log.getDateTime(false);
+            axios
+                .post(webhook.url, { event: 'join', data: config })
+                .then((response) => log.debug('Join event tracked:', response.data))
+                .catch((error) => log.error('Error tracking join event:', error.message));
         }
     });
 
@@ -1822,11 +1851,26 @@ io.sockets.on('connect', async (socket) => {
      * Remove peers from channel
      * @param {string} channel room id
      */
-    async function removePeerFrom(channel) {
+    async function removePeerFrom(channel, socket, reason = 'unknown') {
         if (!(channel in socket.channels)) {
             return log.debug('[' + socket.id + '] [Warning] not in ', channel);
         }
         try {
+            // Handle WebHook
+            if (webhook.enabled) {
+                const data = {
+                    timestamp: log.getDateTime(false),
+                    room_id: channel,
+                    peer: socket.channels[channel],
+                    reason: reason,
+                };
+                // Trigger a POST request when a user disconnects
+                axios
+                    .post(webhook.url, { event: 'disconnect', data })
+                    .then((response) => log.debug('Disconnect event tracked:', response.data))
+                    .catch((error) => log.error('Error tracking disconnect event:', error.message));
+            }
+
             delete socket.channels[channel];
             delete channels[channel][socket.id];
             delete peers[channel][socket.id]; // delete peer data from the room
@@ -1861,6 +1905,11 @@ io.sockets.on('connect', async (socket) => {
             await channels[channel][id].emit('removePeer', { peer_id: socket.id });
             socket.emit('removePeer', { peer_id: id });
             log.debug('[' + socket.id + '] emit removePeer [' + id + ']');
+        }
+
+        if (!OIDC.enabled && hostCfg.protected) {
+            hostCfg.authenticated = false;
+            removeIP(socket);
         }
     }
 

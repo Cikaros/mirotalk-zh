@@ -528,143 +528,19 @@
                             <div class="volume-bar"></div>
                         </div>
                         <br />
-                        <div class="dropdown" id="dropDownMicOptions">
-                            <button class="buttons" id="micOptionsBtn" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-screwdriver-wrench"></i>
-                                <p>高级选项</p>
-                                <i class="fas fa-caret-down"></i>
-                            </button>
-                            <br /><br /><br /><br />
-                            <div id="micDropDownMenu" class="dropdown-menu" aria-labelledby="micOptionsBtn">
-                                <table class="mySettingsTable">
-                                    <tr id="autoGainControlButton">
-                                        <td class="microphone-table-width">
-                                            <div class="title">
-                                                <!-- <i class="fas fa-ear-listen"></i> -->
-                                                <p>自动增益控制</p>
-                                            </div>
-                                        </td>
-                                        <td><input class="toggle" id="switchAutoGainControl" type="checkbox" /></td>
-                                    </tr>
-                                    <tr id="echoCancellationButton">
-                                        <td class="microphone-table-width">
-                                            <div class="title">
-                                                <!-- <i class="fas fa-ear-listen"></i> -->
-                                                <p>回声消除</p>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input class="toggle" id="switchEchoCancellation" type="checkbox" checked />
-                                        </td>
-                                    </tr>
-                                    <tr id="noiseSuppressionButton">
-                                        <td class="microphone-table-width">
-                                            <div class="title">
-                                                <!-- <i class="fas fa-ear-listen"></i> -->
-                                                <p>降噪</p>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input class="toggle" id="switchNoiseSuppression" type="checkbox" checked />
-                                        </td>
-                                    </tr>
-                                    <tr id="micLatencyButton">
-                                        <td class="microphone-table-width">
-                                            <div class="title">
-                                                <!-- <i class="fab fa-audible"></i> -->
-                                                <p>延迟</p>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="title">
-                                                <input
-                                                        type="range"
-                                                        class="mic-input-range"
-                                                        id="micLatencyRange"
-                                                        name="latency"
-                                                        min="10"
-                                                        max="1000"
-                                                        value="50"
-                                                        step="10"
-                                                />
-                                                <p><span id="micLatencyValue">50</span>&nbsp;毫秒</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr id="micVolumeButton">
-                                        <td class="microphone-table-width">
-                                            <div class="title">
-                                                <!-- <i class="fas fa-volume-high"></i> -->
-                                                <p>音量</p>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <input
-                                                        type="range"
-                                                        class="mic-input-range"
-                                                        id="micVolumeRange"
-                                                        name="volume"
-                                                        min="0"
-                                                        max="100"
-                                                        value="100"
-                                                        step="10"
-                                                />
-                                                <p><span id="micVolumeValue">100</span>&nbsp;%</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr id="sampleRateButton">
-                                        <td class="microphone-table-width">
-                                            <div class="title">
-                                                <!-- <i class="fas fa-microphone-lines"></i> -->
-                                                <p>采样率</p>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <select id="sampleRateSelect">
-                                                <option value="48000">48000 Hz</option>
-                                                <option value="44100">44100 Hz</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr id="sampleSizeButton">
-                                        <td class="microphone-table-width">
-                                            <div class="title">
-                                                <!-- <i class="fas fa-microphone-lines"></i> -->
-                                                <p>采样大小</p>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <select id="sampleSizeSelect">
-                                                <option value="16">16 位</option>
-                                                <option value="32">32 位</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr id="channelCountButton">
-                                        <td class="microphone-table-width">
-                                            <div class="title">
-                                                <!-- <i class="fas fa-microphone-lines"></i> -->
-                                                <p>声道数</p>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <select id="channelCountSelect">
-                                                <option value="1">1 (单声道)</option>
-                                                <option value="2">2 (立体声)</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <button id="applyAudioOptionsBtn" class="fas fa-check">
-                                                <p>应用选项</p>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                        <div id="micOptionsDiv">
+                            <table id="mySettingsTable">
+                                <tr id="noiseSuppressionBtn">
+                                    <td>
+                                        <div class="title">
+                                            <i class="fas fa-ear-listen"></i>
+                                            <p id="labelNoiseSuppression">噪音抑制</p>
+                                        </div>
+                                    </td>
+                                    <td><input id="switchNoiseSuppression" class="toggle" type="checkbox" /></td>
+                                </tr>
+                            </table>
+                            <br /><br />
                         </div>
                         <div id="audioOutputDiv">
                             <div class="title">
@@ -695,20 +571,6 @@
 
                     <div id="tabRecording" class="tabcontent">
                         <img id="recImage" src="../images/recording.png" />
-                        <div id="recOptions">
-                            <table class="settingsTable">
-                                <tr>
-                                    <td>
-                                        <div class="title">
-                                            <i class="fa-solid fa-film"></i>
-                                            <p>优先使用H.264</p>
-                                        </div>
-                                    </td>
-                                    <td><input class="toggle" id="switchH264Recording" type="checkbox" /></td>
-                                </tr>
-                            </table>
-                            <hr class="hr" />
-                        </div>
                         <div class="trow">
                             <span class="clw notranslate" id="recordingTime"></span>
                             <br />
@@ -1177,8 +1039,10 @@
         <script defer src="../js/buttons.js"></script>
         <script defer src="../js/videoGrid.js"></script>
         <script defer src="../js/translate.js"></script>
+        <script defer src="../js/fixWebmDuration.js"></script>
         <script defer src="../js/client.js"></script>
         <script defer src="../js/speechRecognition.js"></script>
+        <script defer src="../js/nodeProcessor.js"></script>
 
         <!-- end of Js scripts -->
 

@@ -10,14 +10,27 @@
 <a href="https://codecanyon.net/item/mirotalk-p2p-webrtc-realtime-video-conferences/38376661">![License: Extended](https://img.shields.io/badge/License-Extended_Commercial_Use-darkgreen.svg)</a>
 <a href="https://discord.gg/rgGYfeYW3N">![Community](https://img.shields.io/badge/Community-forum-pink.svg)</a>
 
+This project is proudly sponsored by
+
 </div>
 
-<p align="center">Free WebRTC - P2P - Simple, Secure, Fast Real-Time Video Conferences with support for up to 8k resolution and 60fps. It's compatible with all major browsers and platforms.</p>
+<h1 align=center>Recall.ai - API for meeting recording</h1>
+<p align="center">
+    <a href="https://www.recall.ai">Recall.ai</a> – an API for recording Zoom, Google Meet, Microsoft Teams, and in-person meetings.
+</p>
 
 <hr />
 
+<br />
+
 <p align="center">
-    <a href="https://p2p.mirotalk.com">Explore MiroTalk P2P</a>
+<strong>MiroTalk P2P</strong> - Free WebRTC, Simple, Secure, Fast Real-Time Video Conferences with support for up to 8k resolution and 60fps. It's compatible with all major browsers and platforms.
+</p>
+
+<hr/>
+
+<p align="center">
+    <strong><a href="https://p2p.mirotalk.com">Explore MiroTalk P2P</a></strong>
 </p>
 
 <hr />
@@ -107,8 +120,8 @@
 <br/>
 
 - You can `directly join a room` by using links like:
-- https://p2p.mirotalk.com/join?room=test&name=mirotalk&avatar=0&audio=0&video=0&screen=0&hide=0&notify=0
-- https://mirotalk.up.railway.app/join?room=test&name=mirotalk&avatar=0&audio=0&video=0&screen=0&hide=0&notify=0
+- https://p2p.mirotalk.com/join?room=test&name=mirotalk&avatar=0&audio=0&video=0&screen=0&chat=0&hide=0&notify=0
+- https://mirotalk.up.railway.app/join?room=test&name=mirotalk&avatar=0&audio=0&video=0&screen=0&chat=0&hide=0&notify=0
 
     | Params | Type    | Description     |
     | ------ | ------- | --------------- |
@@ -118,6 +131,7 @@
     | audio  | boolean | Audio stream    |
     | video  | boolean | Video stream    |
     | screen | boolean | Screen stream   |
+    | chat.  | boolean | Chat            |
     | hide   | boolean | Hide myself     |
     | notify | boolean | Welcome message |
     | token  | string  | jwt token       |
@@ -219,6 +233,42 @@ To embed a meeting within `your service or app` using an iframe, you can use the
 ></iframe>
 ```
 
+## WIdget
+
+To quickly add a support [widget](https://codepen.io/Miroslav-Pejic/pen/Byowjvb) to your site, include the script in your `<head>` and place the widget `<div>` at the end of your `<body>`. Your support widget will be ready instantly!
+
+```html
+<!doctype html>
+<html>
+    <head>
+        <script src="https://p2p.mirotalk.com/js/widget.js"></script>
+    </head>
+    <body>
+        <div
+            id="support-widget"
+            data-mirotalk-auto
+            data-domain="p2p.mirotalk.com"
+            data-room="support-room"
+            data-theme="dark"
+            data-widget-type="support"
+            data-widget-state="normal"
+            data-position="bottom-right"
+            data-check-online="false"
+            data-expert-images="https://i.pravatar.cc/40?img=1,https://i.pravatar.cc/40?img=2,https://i.pravatar.cc/40?img=3"
+            data-buttons="audio,video,screen,chat,join"
+            data-heading="Need Help?"
+            data-subheading="Get instant support from our expert team!"
+            data-connect-text="connect in &lt; 5 seconds"
+            data-online-text="We are online"
+            data-offline-text="We are offline"
+            data-powered-by="Powered by MiroTalk"
+        ></div>
+    </body>
+</html>
+```
+
+**[Explore Integrations →](https://docs.mirotalk.com/mirotalk-p2p/integration/)**
+
 </details>
 
 <details>
@@ -261,17 +311,17 @@ curl -X POST "https://mirotalk.up.railway.app/api/v1/meeting" -H "authorization:
 ### 4. Join Meeting (Basic)
 
 ```bash
-curl -X POST "http://localhost:3000/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","avatar":false,"audio":true,"video":true,"screen":false,"hide":false,"notify":true}'
-curl -X POST "https://p2p.mirotalk.com/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","avatar":false,"audio":true,"video":true,"screen":false,"hide":false,"notify":true}'
-curl -X POST "https://mirotalk.up.railway.app/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","avatar":false,"audio":true,"video":true,"screen":false,"hide":false,"notify":true}'
+curl -X POST "http://localhost:3000/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","avatar":false,"audio":true,"video":true,"screen":false,"chat":false,"hide":false,"notify":true}'
+curl -X POST "https://p2p.mirotalk.com/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","avatar":false,"audio":true,"video":true,"screen":false,"chat":false,"hide":false,"notify":true}'
+curl -X POST "https://mirotalk.up.railway.app/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","avatar":false,"audio":true,"video":true,"screen":false,"chat":false,"hide":false,"notify":true}'
 ```
 
 ### 5. Join Meeting with Token
 
 ```bash
-curl -X POST "http://localhost:3000/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","audio":true,"video":true,"screen":false,"hide":false,"notify":true,"token":{"username":"username","password":"password","presenter":true,"expire":"1h"}}'
-curl -X POST "https://p2p.mirotalk.com/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","audio":true,"video":true,"screen":false,"hide":false,"notify":true,"token":{"username":"username","password":"password","presenter":true,"expire":"1h"}}'
-curl -X POST "https://mirotalk.up.railway.app/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","audio":true,"video":true,"screen":false,"hide":false,"notify":true,"token":{"username":"username","password":"password","presenter":true,"expire":"1h"}}'
+curl -X POST "http://localhost:3000/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","audio":true,"video":true,"screen":false,"chat":false,"hide":false,"notify":true,"token":{"username":"username","password":"password","presenter":true,"expire":"1h"}}'
+curl -X POST "https://p2p.mirotalk.com/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","audio":true,"video":true,"screen":false,"chat":false,"hide":false,"notify":true,"token":{"username":"username","password":"password","presenter":true,"expire":"1h"}}'
+curl -X POST "https://mirotalk.up.railway.app/api/v1/join" -H "authorization: mirotalkp2p_default_secret" -H "Content-Type: application/json" --data '{"room":"test","name":"mirotalk","audio":true,"video":true,"screen":false,"chat":false,"hide":false,"notify":true,"token":{"username":"username","password":"password","presenter":true,"expire":"1h"}}'
 ```
 
 ### 6. Generate Token
@@ -388,14 +438,11 @@ To obtain a [MiroTalk P2P license](https://docs.mirotalk.com/license/licensing-o
 
 Do you find MiroTalk P2P indispensable for your needs? Join us in supporting this transformative project by [becoming a backer or sponsor](https://github.com/sponsors/miroslavpejic85). By doing so, not only will your logo prominently feature here, but you'll also drive the growth and sustainability of MiroTalk P2P. Your support is vital in ensuring that this valuable platform continues to thrive and remain accessible for all. Make an impact – back MiroTalk P2P today and be part of this exciting journey!
 
-|                                                                                                                           |                                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| [![BroadcastX](public/sponsors/BroadcastX.png)](https://broadcastx.de/)                                                   | [![Hetzner](public/sponsors/HetznerLogo.png)](https://hetzner.cloud/?ref=XdRifCzCK3bn) |
-| [![LuvLounge](public/sponsors/LuvLounge.png)](https://luvlounge.ca)                                                       | [![QuestionPro](public/sponsors/QuestionPro.png)](https://www.questionpro.com)         |
-| [![BrowserStack](public/sponsors/BrowserStack.png)](https://www.browserstack.com)                                         | [![CrystalSound](public/sponsors/CrystalSound.png)](https://crystalsound.ai)           |
-| [![Cloudron](public/sponsors/Cloudron.png)](https://cloudron.io)                                                          | [![Kiquix](public/sponsors/KiquixLogo.png)](https://kiquix.com)                        |
-| [![LambdaTest](public/sponsors/LambdaTest.png)](https://lambdatest.com/pricing?coupon=QURFODlQUk9NT1RFUg==&refid=1149848) |
-|                                                                                                                           |
+|                                                                                |                                                                                        |                                                                                                                           |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| [![BroadcastX](public/sponsors/BroadcastX.png)](https://broadcastx.de/)        | [![Hetzner](public/sponsors/HetznerLogo.png)](https://hetzner.cloud/?ref=XdRifCzCK3bn) | [![LuvLounge](public/sponsors/LuvLounge.png)](https://luvlounge.ca)                                                       |
+| [![QuestionPro](public/sponsors/QuestionPro.png)](https://www.questionpro.com) | [![BrowserStack](public/sponsors/BrowserStack.png)](https://www.browserstack.com)      | [![CrystalSound](public/sponsors/CrystalSound.png)](https://crystalsound.ai)                                              |
+| [![Cloudron](public/sponsors/Cloudron.png)](https://cloudron.io)               | [![Kiquix](public/sponsors/KiquixLogo.png)](https://kiquix.com)                        | [![LambdaTest](public/sponsors/LambdaTest.png)](https://lambdatest.com/pricing?coupon=QURFODlQUk9NT1RFUg==&refid=1149848) |
 
 </details>
 
@@ -404,9 +451,9 @@ Do you find MiroTalk P2P indispensable for your needs? Join us in supporting thi
 
 ---
 
-|                                                                                                |                                                                                                |
-| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| [![Hostinger](public/advertisers/Hostinger.png)](https://hostinger.com/?REFERRALCODE=MIROTALK) | [![Contabo](public/advertisers/Contabo.png)](https://www.dpbolvw.net/click-101027391-14462707) |
+|                                                                                                |                                                                                                |                                                                                 |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| [![Hostinger](public/advertisers/Hostinger.png)](https://hostinger.com/?REFERRALCODE=MIROTALK) | [![Contabo](public/advertisers/Contabo.png)](https://www.dpbolvw.net/click-101027391-14462707) | [![Rambox](public/advertisers/RamboxLogo.png)](https://rambox.app?via=mirotalk) |
 
 ---
 
@@ -455,3 +502,5 @@ Try also [MiroTalk WEB](https://github.com/miroslavpejic85/mirotalkwebrtc) a pla
 This project is tested with [BrowserStack](https://www.browserstack.com).
 
 ---
+
+![Star History Chart](https://app.repohistory.com/api/svg?repo=miroslavpejic85/mirotalk&type=Date&background=0D1117&color=62C3F8)

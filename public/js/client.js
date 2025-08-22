@@ -15,7 +15,7 @@
  * @license For commercial use or closed source, contact us at license.mirotalk@gmail.com or purchase directly from CodeCanyon
  * @license CodeCanyon: https://codecanyon.net/item/mirotalk-p2p-webrtc-realtime-video-conferences/38376661
  * @author  Miroslav Pejic - miroslav.pejic.85@gmail.com
- * @version 1.5.30
+ * @version 1.5.67
  *
  */
 
@@ -368,20 +368,9 @@ const screenFpsDiv = getId('screenFpsDiv');
 const switchShortcuts = getId('switchShortcuts');
 
 // Audio options
-const dropDownMicOptions = getId('dropDownMicOptions');
-const switchAutoGainControl = getId('switchAutoGainControl');
+const micOptionsDiv = getId('micOptionsDiv');
 const switchNoiseSuppression = getId('switchNoiseSuppression');
-const switchEchoCancellation = getId('switchEchoCancellation');
-const sampleRateSelect = getId('sampleRateSelect');
-const sampleSizeSelect = getId('sampleSizeSelect');
-const channelCountSelect = getId('channelCountSelect');
-const micLatencyRange = getId('micLatencyRange');
-const micVolumeRange = getId('micVolumeRange');
-const applyAudioOptionsBtn = getId('applyAudioOptionsBtn');
-const micOptionsBtn = getId('micOptionsBtn');
-const micDropDownMenu = getId('micDropDownMenu');
-const micLatencyValue = getId('micLatencyValue');
-const micVolumeValue = getId('micVolumeValue');
+const labelNoiseSuppression = getId('labelNoiseSuppression');
 
 // Tab Media
 const shareMediaAudioVideoBtn = getId('shareMediaAudioVideoBtn');
@@ -460,11 +449,6 @@ const sinkId = 'sinkId' in HTMLMediaElement.prototype;
 
 //....
 
-const userLimits = {
-    active: false, // Limit users per room
-    count: 2, // Limit 2 users per room if userLimits.active true
-};
-
 const isRulesActive = true; // Presenter can do anything, guest is slightly moderate, if false no Rules for the room.
 const forceCamMaxResolutionAndFps = false; // This force the webCam to max resolution as default, up to 8k and 60fps (very high bandwidth are required) if false, you can set it from settings
 const useAvatarSvg = true; // if false the cam-Off avatar = images.avatar
@@ -526,6 +510,9 @@ const pickr = Pickr.create({
         lS.setSettings(lsSettings);
     });
 
+// Room
+let thisMaxRoomParticipants = 8;
+
 // misc
 let swBg = 'rgba(0, 0, 0, 0.7)'; // swAlert background color
 let callElapsedTime; // count time
@@ -547,6 +534,7 @@ let myVideoStatusBefore = false;
 let myScreenStatus = false;
 let isScreenEnabled = getScreenEnabled();
 let notify = getNotify(); // popup room sharing on join
+let chat = getChat(); // popup chat on join
 let notifyBySound = true; // turn on - off sound notifications
 let isPeerReconnected = false;
 
@@ -572,6 +560,7 @@ let allPeers = {}; // keep track of all peers in the room, indexed by peer_id ==
 let initStream; // initial webcam stream
 let localVideoMediaStream; // my webcam
 let localAudioMediaStream; // my microphone
+let noiseProcessor = null; // RNNoise audio processing
 let peerVideoMediaElements = {}; // keep track of our peer <video> tags, indexed by peer_id_video
 let peerAudioMediaElements = {}; // keep track of our peer <audio> tags, indexed by peer_id_audio
 
@@ -646,7 +635,7 @@ let recScreenStream; // screen media to recording
 let recTimer;
 let recCodecs;
 let recElapsedTime;
-let recPrioritizeH264 = false;
+let recStartTs = null;
 let isStreamRecording = false;
 let isStreamRecordingPaused = false;
 let isRecScreenStream = false;
@@ -778,6 +767,11 @@ function setButtonsToolTip() {
     setTippy(mySettingsCloseBtn, '关闭', 'bottom');
     setTippy(myPeerNameSetBtn, '更改名称', 'top');
     setTippy(myRoomId, '房间名称（点击复制/分享）', 'right');
+    setTippy(
+        switchNoiseSuppression,
+        '如果启用，音频将被处理以减少背景噪音，使声音更加清晰',
+        'right'
+    );
     setTippy(
         switchPushToTalk,
         '如果激活，按下空格键时麦克风将被激活，释放空格键时将被停用，就像对讲机一样',
@@ -1034,6 +1028,25 @@ function getNotify() {
 }
 
 /**
+ * Check if chat is set
+ * @returns {boolean} true/false
+ */
+function getChat() {
+    let qs = new URLSearchParams(window.location.search);
+    let chat = filterXSS(qs.get('chat'));
+    if (chat) {
+        let queryChat = chat === '1' || chat === 'true';
+        if (queryChat != null) {
+            console.log('Direct join', { chat: queryChat });
+            notify = false; // From widget disable notify on join...
+            return queryChat;
+        }
+    }
+    console.log('Direct join', { chat: chat });
+    return chat;
+}
+
+/**
  * Get Peer JWT
  * @returns {mixed} boolean false or token string
  */
@@ -1271,7 +1284,7 @@ async function handleConnect() {
 function handleServerInfo(config) {
     console.log('13. Server info', config);
 
-    const { peers_count, host_protected, user_auth, is_presenter, survey, redirect, rec_prioritize_h264 } = config;
+    const { peers_count, host_protected, user_auth, is_presenter, survey, redirect, maxRoomParticipants } = config;
 
     isHostProtected = host_protected;
     isPeerAuthEnabled = user_auth;
@@ -1281,10 +1294,12 @@ function handleServerInfo(config) {
     surveyURL = survey.url;
 
     // Get redirect settings from server
-    ((redirectActive = redirect.active), (redirectURL = redirect.url));
+    redirectActive = redirect.active;
+    redirectURL = redirect.url;
 
     // Limit room to n peers
-    if (userLimits.active && peers_count > userLimits.count) {
+    if (maxRoomParticipants) thisMaxRoomParticipants = maxRoomParticipants;
+    if (peers_count > thisMaxRoomParticipants) {
         return roomIsBusy();
     }
 
@@ -1304,6 +1319,8 @@ function handleServerInfo(config) {
     } else {
         checkShareScreen();
     }
+
+    checkChatOnJoin();
 }
 
 /**
@@ -1341,7 +1358,7 @@ function roomIsBusy() {
         imageUrl: images.forbidden,
         position: 'center',
         title: '房间已满',
-        html: `该房间限于${userLimits.count}名用户。 <br/> 请稍后再试!`,
+        html: `该房间限于${thisMaxRoomParticipants}名用户。 <br/> 请稍后再试!`,
         showDenyButton: false,
         confirmButtonText: `好的`,
         showClass: { popup: 'animate__animated animate__fadeInDown' },
@@ -1393,6 +1410,11 @@ function handleButtonsRule() {
     // Main
     elemDisplay(shareRoomBtn, buttons.main.showShareRoomBtn);
     elemDisplay(hideMeBtn, buttons.main.showHideMeBtn);
+    elemDisplay(
+        toggleExtraBtn,
+        buttons.main.showExtraBtn &&
+            Array.from(buttonsBar.children).filter((el) => el.style.display !== 'none').length > 0
+    );
     elemDisplay(audioBtn, buttons.main.showAudioBtn);
     elemDisplay(videoBtn, buttons.main.showVideoBtn);
     //elemDisplay(screenShareBtn, buttons.main.showScreenBtn, ); // auto-detected
@@ -1421,7 +1443,7 @@ function handleButtonsRule() {
     elemDisplay(captionTogglePin, !isMobileDevice && buttons.caption.showTogglePinBtn);
     elemDisplay(captionMaxBtn, !isMobileDevice && buttons.caption.showMaxBtn);
     // Settings
-    elemDisplay(dropDownMicOptions, buttons.settings.showMicOptionsBtn || isPresenter); // auto-detected
+    elemDisplay(micOptionsDiv, buttons.settings.showMicOptionsBtn || isPresenter);
     elemDisplay(captionEveryoneBtn, buttons.settings.showCaptionEveryoneBtn);
     elemDisplay(muteEveryoneBtn, buttons.settings.showMuteEveryoneBtn);
     elemDisplay(hideEveryoneBtn, buttons.settings.showHideEveryoneBtn);
@@ -1899,8 +1921,8 @@ async function changeLocalCamera(deviceId) {
 
     await navigator.mediaDevices
         .getUserMedia({ video: videoConstraints })
-        .then((camStream) => {
-            updateLocalVideoMediaStream(camStream);
+        .then(async (camStream) => {
+            await updateLocalVideoMediaStream(camStream);
         })
         .catch(async (err) => {
             console.error('Error accessing local video device:', err);
@@ -1913,7 +1935,7 @@ async function changeLocalCamera(deviceId) {
                         },
                     },
                 });
-                updateLocalVideoMediaStream(camStream);
+                await updateLocalVideoMediaStream(camStream);
             } catch (fallbackErr) {
                 console.error('Error accessing init video device with default constraints', fallbackErr);
                 printError(err);
@@ -1924,14 +1946,14 @@ async function changeLocalCamera(deviceId) {
      * Update Local Video Media Stream
      * @param {MediaStream} camStream
      */
-    function updateLocalVideoMediaStream(camStream) {
+    async function updateLocalVideoMediaStream(camStream) {
         if (camStream) {
             camera = detectCameraFacingMode(camStream);
             console.log('Detect Camera facing mode', camera);
             myVideo.srcObject = camStream;
             localVideoMediaStream = camStream;
             logStreamSettingsInfo('Success attached local video stream', camStream);
-            refreshMyStreamToPeers(camStream);
+            await refreshMyStreamToPeers(camStream);
             setLocalMaxFps(videoMaxFrameRate);
         }
     }
@@ -1956,18 +1978,19 @@ async function changeLocalMicrophone(deviceId) {
     }
 
     // Get audio constraints
-    const audioConstraints = await getAudioConstraints();
-    audioConstraints['deviceId'] = { exact: deviceId };
+    const audioConstraints = getAudioConstraints(deviceId);
     console.log('audioConstraints', audioConstraints);
 
     await navigator.mediaDevices
-        .getUserMedia({ audio: audioConstraints })
-        .then((micStream) => {
+        .getUserMedia(audioConstraints)
+        .then(async (micStream) => {
             myAudio.srcObject = micStream;
             localAudioMediaStream = micStream;
             logStreamSettingsInfo('Success attached local microphone stream', micStream);
             getMicrophoneVolumeIndicator(micStream);
-            refreshMyStreamToPeers(micStream, true);
+            lsSettings.mic_noise_suppression
+                ? await restartNoiseSuppression()
+                : await refreshMyStreamToPeers(micStream, true);
         })
         .catch((err) => {
             console.error('[Error] changeLocalMicrophone', err);
@@ -1997,6 +2020,45 @@ function checkPeerAudioVideo() {
         //elemDisplay(tabVideoBtn, queryPeerVideo);
         console.log('Direct join', { video: queryPeerVideo });
     }
+}
+
+/**
+ * Enable RNNoise audio processing for noise suppression
+ */
+async function enableNoiseSuppression() {
+    if (!localAudioMediaStream) {
+        userLog('error', 'No local audio stream available for noise suppression.');
+        return;
+    }
+    if (!noiseProcessor) noiseProcessor = new RNNoiseProcessor();
+    const processedStream = await noiseProcessor.startProcessing(localAudioMediaStream);
+    noiseProcessor.toggleNoiseSuppression();
+    localAudioMediaStream = processedStream;
+    await refreshMyStreamToPeers(localAudioMediaStream, true);
+}
+
+/**
+ * Disable RNNoise audio processing for noise suppression
+ */
+async function disableNoiseSuppression() {
+    if (noiseProcessor) {
+        localAudioMediaStream = noiseProcessor.mediaStream || localAudioMediaStream;
+        await refreshMyStreamToPeers(localAudioMediaStream, true);
+        noiseProcessor.toggleNoiseSuppression();
+        await noiseProcessor.stopProcessing();
+        noiseProcessor = null;
+    } else {
+        await refreshMyStreamToPeers(localAudioMediaStream, true);
+    }
+}
+
+/**
+ * Restart noise suppression (e.g. after changing mic)
+ */
+async function restartNoiseSuppression() {
+    if (!lsSettings.mic_noise_suppression) return;
+    await disableNoiseSuppression();
+    await enableNoiseSuppression();
 }
 
 /**
@@ -2473,8 +2535,14 @@ function handleDisconnect(reason) {
                 }
             }
         }
-        peerVideoMediaElements[peerVideoId].parentNode.removeChild(peerVideoMediaElements[peerVideoId]);
-        peerAudioMediaElements[peerAudioId].parentNode.removeChild(peerAudioMediaElements[peerAudioId]);
+
+        if (peerVideoMediaElements[peerVideoId] && peerVideoMediaElements[peerVideoId].parentNode) {
+            peerVideoMediaElements[peerVideoId].parentNode.removeChild(peerVideoMediaElements[peerVideoId]);
+        }
+        if (peerAudioMediaElements[peerAudioId] && peerAudioMediaElements[peerAudioId].parentNode) {
+            peerAudioMediaElements[peerAudioId].parentNode.removeChild(peerAudioMediaElements[peerAudioId]);
+        }
+
         peerConnections[peer_id].close();
         msgerRemovePeer(peer_id);
         removeVideoPinMediaContainer(peer_id);
@@ -3009,16 +3077,19 @@ async function setupLocalAudioMedia() {
 
     console.log('Requesting access to audio inputs');
 
-    const audioConstraints = useAudio ? await getAudioConstraints() : false;
+    const audioConstraints = useAudio ? getAudioConstraints() : { audio: false };
 
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints });
+        const stream = await navigator.mediaDevices.getUserMedia(audioConstraints);
         if (stream) {
             await loadLocalMedia(stream, 'audio');
             if (useAudio) {
                 localAudioMediaStream = stream;
                 await getMicrophoneVolumeIndicator(stream);
                 console.log('10. Access granted to audio device');
+                if (lsSettings.mic_noise_suppression) {
+                    await enableNoiseSuppression();
+                }
             }
         }
     } catch (err) {
@@ -3338,6 +3409,15 @@ function checkShareScreen() {
                 screenShareBtn.click();
             }
         });
+    }
+}
+
+/**
+ * Open chat on Join
+ */
+function checkChatOnJoin() {
+    if (chat) {
+        chatRoomBtn.click();
     }
 }
 
@@ -4730,10 +4810,11 @@ function setRecordStreamBtn() {
  */
 function setFullScreenBtn() {
     const fsSupported =
-        document.fullscreenEnabled ||
-        document.webkitFullscreenEnabled ||
-        document.mozFullScreenEnabled ||
-        document.msFullscreenEnabled;
+        buttons.main.showFullScreenBtn &&
+        (document.fullscreenEnabled ||
+            document.webkitFullscreenEnabled ||
+            document.mozFullScreenEnabled ||
+            document.msFullscreenEnabled);
 
     if (fsSupported) {
         // detect esc from full screen mode
@@ -4875,6 +4956,7 @@ function setChatRoomBtn() {
 
     // on input check 4emoji from map
     msgerInput.oninput = function () {
+        if (isChatPasteTxt) return;
         for (let i in chatInputEmoji) {
             let regex = new RegExp(escapeSpecialChars(i), 'gim');
             this.value = this.value.replace(regex, chatInputEmoji[i]);
@@ -5516,14 +5598,6 @@ function setMySettingsBtn() {
     // make chat room draggable for desktop
     if (!isMobileDevice) dragElement(mySettings, mySettingsHeader);
 
-    // recording codecs
-    switchH264Recording.addEventListener('change', (e) => {
-        recPrioritizeH264 = e.currentTarget.checked;
-        lsSettings.rec_prioritize_h264 = recPrioritizeH264;
-        lS.setSettings(lsSettings);
-        userLog('toast', `${icons.codecs} 录音优先使用H.264编码 ` + (recPrioritizeH264 ? 'ON' : 'OFF'));
-        playSound('switch');
-    });
     // Recording pause/resume
     pauseRecBtn.addEventListener('click', (e) => {
         pauseRecording();
@@ -5644,60 +5718,18 @@ function setupMySettings() {
         await changeLocalMicrophone(audioInputSelect.value);
         refreshLsDevices();
     });
-    // advance audio options
-    micOptionsBtn.addEventListener('click', function () {
-        micDropDownMenu.style.display === 'block'
-            ? elemDisplay(micDropDownMenu, false)
-            : elemDisplay(micDropDownMenu, true, 'block');
-    });
     // audio options
-    switchAutoGainControl.onchange = (e) => {
-        lsSettings.mic_auto_gain_control = e.currentTarget.checked;
+    switchNoiseSuppression.onchange = async (e) => {
+        const noiseSuppressionEnabled = e.currentTarget.checked;
+        lsSettings.mic_noise_suppression = noiseSuppressionEnabled;
         lS.setSettings(lsSettings);
+        noiseSuppressionEnabled ? await enableNoiseSuppression() : await disableNoiseSuppression();
+        toastMessage(
+            noiseSuppressionEnabled ? 'success' : 'info',
+            `Noise suppression ${noiseSuppressionEnabled ? 'enabled' : 'disabled'}`
+        );
         e.target.blur();
     };
-    switchEchoCancellation.onchange = (e) => {
-        lsSettings.mic_echo_cancellations = e.currentTarget.checked;
-        lS.setSettings(lsSettings);
-        e.target.blur();
-    };
-    switchNoiseSuppression.onchange = (e) => {
-        lsSettings.mic_noise_suppression = e.currentTarget.checked;
-        lS.setSettings(lsSettings);
-        e.target.blur();
-    };
-    sampleRateSelect.onchange = (e) => {
-        lsSettings.mic_sample_rate = e.currentTarget.selectedIndex;
-        lS.setSettings(lsSettings);
-        e.target.blur();
-    };
-    sampleSizeSelect.onchange = (e) => {
-        lsSettings.mic_sample_size = e.currentTarget.selectedIndex;
-        lS.setSettings(lsSettings);
-        e.target.blur();
-    };
-    channelCountSelect.onchange = (e) => {
-        lsSettings.mic_channel_count = e.currentTarget.selectedIndex;
-        lS.setSettings(lsSettings);
-        e.target.blur();
-    };
-    micLatencyRange.oninput = (e) => {
-        lsSettings.mic_latency = e.currentTarget.value;
-        lS.setSettings(lsSettings);
-        micLatencyValue.innerText = e.currentTarget.value;
-        e.target.blur();
-    };
-    micVolumeRange.oninput = (e) => {
-        lsSettings.mic_volume = e.currentTarget.value;
-        lS.setSettings(lsSettings);
-        micVolumeValue.innerText = e.currentTarget.value;
-        e.target.blur();
-    };
-    // apply audio options constraints
-    applyAudioOptionsBtn.addEventListener('click', async () => {
-        await changeLocalMicrophone(audioInputSelect.value);
-        micOptionsBtn.click();
-    });
     // select audio output
     audioOutputSelect.addEventListener('change', async () => {
         await changeAudioDestination();
@@ -5966,29 +5998,18 @@ function loadSettingsFromLocalStorage() {
     notifyBySound = lsSettings.sounds;
     isKeepButtonsVisible = lsSettings.keep_buttons_visible;
     isAudioPitchBar = lsSettings.pitch_bar;
-    recPrioritizeH264 = lsSettings.rec_prioritize_h264;
     isShortcutsEnabled = lsSettings.keyboard_shortcuts;
     switchSounds.checked = notifyBySound;
     switchShare.checked = notify;
     switchKeepButtonsVisible.checked = isKeepButtonsVisible;
     switchAudioPitchBar.checked = isAudioPitchBar;
-    switchH264Recording.checked = recPrioritizeH264;
     switchShortcuts.checked = isShortcutsEnabled;
 
     themeCustom.check.checked = themeCustom.keep;
     themeSelect.disabled = themeCustom.keep;
     themeCustom.input.value = themeCustom.color;
 
-    switchAutoGainControl.checked = lsSettings.mic_auto_gain_control;
-    switchEchoCancellation.checked = lsSettings.mic_echo_cancellations;
     switchNoiseSuppression.checked = lsSettings.mic_noise_suppression;
-    sampleRateSelect.selectedIndex = lsSettings.mic_sample_rate;
-    sampleSizeSelect.selectedIndex = lsSettings.mic_sample_size;
-    channelCountSelect.selectedIndex = lsSettings.mic_channel_count;
-    micLatencyRange.value = lsSettings.mic_latency || '50';
-    micLatencyValue.innerText = lsSettings.mic_latency || '50';
-    micVolumeRange.value = lsSettings.mic_volume || '100';
-    micVolumeValue.innerText = lsSettings.mic_volume || '100';
 
     videoObjFitSelect.selectedIndex = lsSettings.video_obj_fit;
     btnsBarSelect.selectedIndex = lsSettings.buttons_bar;
@@ -6091,13 +6112,12 @@ async function getAudioVideoConstraints() {
         videoConstraints = await getVideoConstraints(videoQualitySelect.value ? videoQualitySelect.value : 'default');
         videoConstraints['deviceId'] = videoSource ? { exact: videoSource } : undefined;
     }
-    let audioConstraints = useAudio;
-    if (audioConstraints) {
-        audioConstraints = await getAudioConstraints();
-        audioConstraints['deviceId'] = audioSource ? { exact: audioSource } : undefined;
+    let audioConstraints = { audio: false };
+    if (useAudio) {
+        audioConstraints = getAudioConstraints(audioSource);
     }
     return {
-        audio: audioConstraints,
+        audioConstraints,
         video: videoConstraints,
     };
 }
@@ -6166,24 +6186,14 @@ async function getVideoConstraints(videoQuality) {
 
 /**
  * Get audio constraints
+ * @param {string} deviceId audio input device ID
+ * @returns {object} audio constraints
  */
-async function getAudioConstraints() {
-    // For presenter
-    const constraints = {
-        audio: {
-            autoGainControl: switchAutoGainControl.checked,
-            echoCancellation: switchEchoCancellation.checked,
-            noiseSuppression: switchNoiseSuppression.checked,
-            sampleRate: parseInt(sampleRateSelect.value),
-            sampleSize: parseInt(sampleSizeSelect.value),
-            channelCount: parseInt(channelCountSelect.value),
-            latency: parseInt(micLatencyRange.value),
-            volume: parseInt(micVolumeRange.value / 100),
-        },
-        video: false,
+function getAudioConstraints(deviceId = null) {
+    const audioConstraints = deviceId ? { deviceId: { exact: deviceId } } : true;
+    return {
+        audio: audioConstraints,
     };
-    console.log('Audio constraints', constraints);
-    return constraints;
 }
 
 /**
@@ -6258,31 +6268,76 @@ async function changeAudioDestination(audioElement = false) {
  * @param {string} sinkId uuid audio output device
  */
 async function attachSinkId(element, sinkId) {
-    if (typeof element.sinkId !== 'undefined') {
-        element
-            .setSinkId(sinkId)
-            .then(() => {
-                console.log(`Success, audio output device attached: ${sinkId}`);
-            })
-            .catch((err) => {
-                let errorMessage = err;
-                if (err.name === 'SecurityError') {
-                    errorMessage = 'SecurityError: You need to use HTTPS for selecting audio output device';
-                } else if (err.name === 'NotAllowedError') {
-                    errorMessage = 'NotAllowedError: Permission to use audio output device is not granted';
-                } else if (err.name === 'NotFoundError') {
-                    errorMessage = 'NotFoundError: The specified audio output device was not found';
-                } else {
-                    errorMessage = `Error: ${err}`;
-                }
-                console.error(errorMessage);
-                userLog('error', `attachSinkId: ${errorMessage}`);
-                // Jump back to first output device in the list as it's the default.
-                audioOutputSelect.selectedIndex = 0;
-            });
-    } else {
+    if (typeof element.sinkId === 'undefined') {
         console.warn('Browser does not support output device selection.');
+        return;
     }
+
+    // Helper to actually set the sinkId and handle errors uniformly
+    const doSetSinkId = async () => {
+        try {
+            await element.setSinkId(sinkId);
+            console.log(`Success, audio output device attached: ${sinkId}`);
+        } catch (err) {
+            let errorMessage = err;
+            if (err.name === 'SecurityError') {
+                errorMessage = 'SecurityError: You need to use HTTPS for selecting audio output device';
+            } else if (err.name === 'NotAllowedError') {
+                errorMessage = 'NotAllowedError: Permission to use audio output device is not granted';
+            } else if (err.name === 'NotFoundError') {
+                errorMessage = 'NotFoundError: The specified audio output device was not found';
+            } else if (err.message) {
+                errorMessage = `Error: ${err.message}`;
+            } else {
+                errorMessage = `Error: ${err}`;
+            }
+            console.error(errorMessage);
+            userLog('error', `attachSinkId: ${errorMessage}`);
+            // Jump back to first output device in the list as it's the default.
+            if (typeof audioOutputSelect !== 'undefined' && audioOutputSelect) {
+                audioOutputSelect.selectedIndex = 0;
+            }
+            throw err;
+        }
+    };
+
+    // If a user gesture is required (Chrome policy), defer until the next interaction
+    const needsUserGesture = !!(navigator.userActivation && !navigator.userActivation.isActive);
+    if (needsUserGesture) {
+        // Show a single notification prompting the user to click
+        if (!window.__sinkGestureNotified) {
+            window.__sinkGestureNotified = true;
+            userLog('toast', 'Click anywhere to apply the speaker change');
+        }
+
+        return new Promise((resolve) => {
+            const applyOnGesture = async () => {
+                try {
+                    await doSetSinkId();
+                    resolve(true);
+                } catch (e) {
+                    resolve(false);
+                } finally {
+                    window.removeEventListener('pointerdown', applyOnGesture);
+                    window.removeEventListener('keydown', applyOnGesture);
+                    window.removeEventListener('mousedown', applyOnGesture);
+                    window.removeEventListener('touchstart', applyOnGesture);
+                    window.removeEventListener('keydown', applyOnGesture);
+                    window.__sinkGestureNotified = false;
+                }
+            };
+            const opts = { once: true };
+            // Use pointerdown (covers mouse/touch/pen) and keydown as safe user gestures
+            window.addEventListener('pointerdown', applyOnGesture, opts);
+            window.addEventListener('keydown', applyOnGesture, opts);
+            window.addEventListener('mousedown', applyOnGesture, opts);
+            window.addEventListener('touchstart', applyOnGesture, opts);
+            window.addEventListener('keydown', applyOnGesture, opts);
+        });
+    }
+
+    // Otherwise, set immediately
+    return doSetSinkId();
 }
 
 /**
@@ -7090,7 +7145,7 @@ function startRecordingTimer() {
             recElapsedTime++;
             let recTimeElapsed = secondsToHms(recElapsedTime);
             myVideoParagraph.innerText = myPeerName + ' 🔴 REC ' + recTimeElapsed;
-            recordingTime.innerText = recTimeElapsed;
+            recordingTime.innerText = '🔴 REC ' + recTimeElapsed;
         }
     }, 1000);
 }
@@ -7105,7 +7160,6 @@ function stopRecordingTimer() {
  */
 function getSupportedMimeTypes() {
     const possibleTypes = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/mp4'];
-    possibleTypes.splice(recPrioritizeH264 ? 0 : 2, 0, 'video/mp4;codecs=h264,aac', 'video/webm;codecs=h264,opus');
     console.log('POSSIBLE CODECS', possibleTypes);
     return possibleTypes.filter((mimeType) => {
         return MediaRecorder.isTypeSupported(mimeType);
@@ -7328,6 +7382,15 @@ function notifyRecording(fromId, from, fromAvatar, action) {
 }
 
 /**
+ * Toggle Video and Audio tabs
+ * @param {boolean} disabled - If true, disable the tabs; otherwise, enable them
+ */
+function toggleVideoAudioTabs(disabled = false) {
+    tabVideoBtn.disabled = disabled;
+    tabAudioBtn.disabled = disabled;
+}
+
+/**
  * Handle Media Recorder
  * @param {object} mediaRecorder
  */
@@ -7343,6 +7406,7 @@ function handleMediaRecorder(mediaRecorder) {
  * @param {object} event of media recorder
  */
 function handleMediaRecorderStart(event) {
+    toggleVideoAudioTabs(true);
     startRecordingTimer();
     emitPeersAction('recStart');
     emitPeerStatus('rec', true);
@@ -7351,6 +7415,8 @@ function handleMediaRecorderStart(event) {
     recordStreamBtn.style.setProperty('color', '#ff4500');
     setTippy(recordStreamBtn, '停止录制', placement);
     if (isMobileDevice) elemDisplay(swapCameraBtn, false);
+    switchH264Recording.disabled = true;
+    recStartTs = performance.now();
     playSound('recStart');
 }
 
@@ -7368,6 +7434,7 @@ function handleMediaRecorderData(event) {
  * @param {object} event of media recorder
  */
 function handleMediaRecorderStop(event) {
+    toggleVideoAudioTabs(false);
     console.log('MediaRecorder stopped: ', event);
     console.log('MediaRecorder Blobs: ', recordedBlobs);
     stopRecordingTimer();
@@ -7385,6 +7452,7 @@ function handleMediaRecorderStop(event) {
     downloadRecordedStream();
     setTippy(recordStreamBtn, '开始录制', placement);
     if (isMobileDevice) elemDisplay(swapCameraBtn, true, 'block');
+    switchH264Recording.disabled = false;
     playSound('recStop');
 }
 
@@ -7443,15 +7511,24 @@ function resumeRecording() {
 }
 
 /**
+ * Get WebM duration fixer function
+ * @returns {Function|null}
+ */
+function getWebmFixerFn() {
+    const fn = window.FixWebmDuration;
+    return typeof fn === 'function' ? fn : null;
+}
+
+/**
  * Download recorded stream
  */
-function downloadRecordedStream() {
+async function downloadRecordedStream() {
     try {
         const type = recordedBlobs[0].type.includes('mp4') ? 'mp4' : 'webm';
-        const blob = new Blob(recordedBlobs, { type: 'video/' + type });
+        const rawBlob = new Blob(recordedBlobs, { type: 'video/' + type });
         const recFileName = getDataTimeString() + '-REC.' + type;
         const currentDevice = isMobileDevice ? 'MOBILE' : 'PC';
-        const blobFileSize = bytesToSize(blob.size);
+        const blobFileSize = bytesToSize(rawBlob.size);
 
         const recordingInfo = `
         <br/>
@@ -7467,16 +7544,38 @@ function downloadRecordedStream() {
         lastRecordingInfo.innerHTML = `<br/>Last recording info: ${recordingInfo}`;
         recordingTime.innerText = '';
 
-        userLog(
-            'success-html',
+        msgHTML(
+            null,
+            null,
+            'Recording',
             `<div style="text-align: left;">
-                🔴 &nbsp; 录制信息: <br/>
+                🔴 &nbsp; 录制信息:
                 ${recordingInfo}
                 请等待处理完成，然后将下载到您的 ${currentDevice} 设备。
             </div>`,
+            'top'
         );
 
-        saveBlobToFile(blob, recFileName);
+        // Fix WebM duration to make it seekable
+        const fixWebmDuration = async (blob) => {
+            if (type !== 'webm') return blob;
+            try {
+                const fix = getWebmFixerFn();
+                const durationMs = recStartTs ? performance.now() - recStartTs : undefined;
+                const fixed = await fix(blob, durationMs);
+                return fixed || blob;
+            } catch (e) {
+                console.warn('WEBM duration fix failed, saving original blob:', e);
+                return blob;
+            } finally {
+                recStartTs = null;
+            }
+        };
+
+        (async () => {
+            const finalBlob = await fixWebmDuration(rawBlob);
+            saveBlobToFile(finalBlob, recFileName);
+        })();
     } catch (err) {
         userLog('error', '录音保存失败: ' + err);
     }
@@ -11250,7 +11349,7 @@ function showAbout() {
     Swal.fire({
         background: swBg,
         position: 'center',
-        title: brand.about?.title && brand.about.title.trim() !== '' ? brand.about.title : 'WebRTC P2P v1.5.30',
+        title: brand.about?.title && brand.about.title.trim() !== '' ? brand.about.title : 'WebRTC P2P v1.5.67',
         imageUrl: brand.about?.imageUrl && brand.about.imageUrl.trim() !== '' ? brand.about.imageUrl : images.about,
         customClass: { image: 'img-about' },
         html: `

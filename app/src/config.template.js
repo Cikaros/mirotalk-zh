@@ -5,6 +5,7 @@ const packageJson = require('../../package.json');
 module.exports = {
     // Branding and customizations require a license: https://codecanyon.net/item/mirotalk-p2p-webrtc-realtime-video-conferences/38376661
     brand: {
+        htmlInjection: true,
         app: {
             language: 'en', // https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
             name: 'MiroTalk',
@@ -78,6 +79,37 @@ module.exports = {
                 <hr />
             `,
         },
+        // https://docs.mirotalk.com/mirotalk-p2p/integration/#widgets-integration
+        widget: {
+            enabled: false,
+            roomId: 'support-room',
+            theme: 'dark',
+            widgetState: 'minimized',
+            widgetType: 'support',
+            supportWidget: {
+                position: 'top-right',
+                expertImages: [
+                    'https://photo.cloudron.pocketsolution.net/uploads/original/95/7d/a5f7f7a2c89a5fee7affda5f013c.jpeg',
+                ],
+                buttons: {
+                    audio: true,
+                    video: true,
+                    screen: true,
+                    chat: true,
+                    join: true,
+                },
+                checkOnlineStatus: false,
+                isOnline: true,
+                customMessages: {
+                    heading: 'Need Help?',
+                    subheading: 'Get instant support from our expert team!',
+                    connectText: 'connect in < 5 seconds',
+                    onlineText: 'We are online',
+                    offlineText: 'We are offline',
+                    poweredBy: 'Powered by MiroTalk',
+                },
+            },
+        },
         //...
     },
     /**
@@ -90,6 +122,7 @@ module.exports = {
             showShareQr: true,
             showShareRoomBtn: true, // For guests
             showHideMeBtn: true,
+            showFullScreenBtn: true,
             showAudioBtn: true,
             showVideoBtn: true,
             showScreenBtn: true, // autodetected
@@ -104,6 +137,7 @@ module.exports = {
             showDocumentPipBtn: true,
             showMySettingsBtn: true,
             showAboutBtn: true, // Please keep me always true, Thank you!
+            showExtraBtn: true,
         },
         chat: {
             showTogglePinBtn: true,
@@ -156,5 +190,9 @@ module.exports = {
         whiteboard: {
             whiteboardLockBtn: false,
         },
+    },
+    webhook: {
+        enabled: false, // Enable webhook functionality
+        url: 'http://localhost:8888/webhook-endpoint', // Webhook server URL
     },
 };

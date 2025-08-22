@@ -73,7 +73,7 @@ let brand = {
     },
     about: {
         imageUrl: '../images/mirotalk-logo.gif',
-        title: 'WebRTC P2P v1.5.30',
+        title: 'WebRTC P2P v1.5.67',
         html: `
             <button 
                 id="support-button" 
@@ -101,6 +101,36 @@ let brand = {
             <hr />
         `,
     },
+    widget: {
+        enabled: false,
+        roomId: 'support-room',
+        theme: 'dark',
+        widgetState: 'minimized',
+        widgetType: 'support',
+        supportWidget: {
+            position: 'top-right',
+            expertImages: [
+                'https://photo.cloudron.pocketsolution.net/uploads/original/95/7d/a5f7f7a2c89a5fee7affda5f013c.jpeg',
+            ],
+            buttons: {
+                audio: true,
+                video: true,
+                screen: true,
+                chat: true,
+                join: true,
+            },
+            checkOnlineStatus: false,
+            isOnline: true,
+            customMessages: {
+                heading: 'Need Help?',
+                subheading: 'Get instant support from our expert team!',
+                connectText: 'connect in < 5 seconds',
+                onlineText: 'We are online',
+                offlineText: 'We are offline',
+                poweredBy: 'Powered by MiroTalk',
+            },
+        },
+    },
     //...
 };
 
@@ -112,6 +142,8 @@ async function initBrand() {
     await getBrand();
 
     handleBrand();
+
+    handleWidget();
 }
 
 /**
@@ -135,6 +167,8 @@ async function getBrand() {
                     clientBrand: brand,
                 });
                 window.sessionStorage.setItem(brandDataKey, JSON.stringify(serverBrand));
+            } else {
+                console.warn('FETCH BRAND SETTINGS - DISABLED');
             }
         } catch (error) {
             console.error('FETCH GET BRAND ERROR', error.message);
@@ -186,6 +220,25 @@ function handleBrand() {
     !brand.html.sponsors && elementDisplay(sponsors, false);
     !brand.html.advertisers && elementDisplay(advertisers, false);
     !brand.html.footer && elementDisplay(footer, false);
+}
+
+// WIDGET customize
+function handleWidget() {
+    if (brand.widget?.enabled) {
+        const domain = window.location.host;
+        const roomId = brand.widget?.roomId || 'support-room';
+        const userName = 'guest-' + Math.floor(Math.random() * 10000);
+        if (typeof MiroTalkWidget !== 'undefined') {
+            new MiroTalkWidget(domain, roomId, userName, brand.widget);
+        } else {
+            console.warn('MiroTalkWidget is not defined. Please check widget.js loading.', {
+                domain,
+                roomId,
+                userName,
+                widget: brand.widget,
+            });
+        }
+    }
 }
 
 /**
