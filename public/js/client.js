@@ -15,7 +15,7 @@
  * @license For commercial use or closed source, contact us at license.mirotalk@gmail.com or purchase directly from CodeCanyon
  * @license CodeCanyon: https://codecanyon.net/item/mirotalk-p2p-webrtc-realtime-video-conferences/38376661
  * @author  Miroslav Pejic - miroslav.pejic.85@gmail.com
- * @version 1.5.67
+ * @version 1.5.79
  *
  */
 
@@ -107,6 +107,7 @@ const icons = {
     fileReceive: '<i class="fas fa-file-import"></i>',
     codecs: '<i class="fa-solid fa-film"></i>',
     theme: '<i class="fas fa-fill-drip"></i>',
+    close: '<i class="fas fa-times"></i>',
 };
 
 // Whiteboard and fileSharing
@@ -205,7 +206,6 @@ const leaveRoomBtn = getId('leaveRoomBtn');
 // Room Emoji Picker
 const closeEmojiPickerContainer = getId('closeEmojiPickerContainer');
 const emojiPickerContainer = getId('emojiPickerContainer');
-const emojiPickerHeader = getId('emojiPickerHeader');
 const userEmoji = getId(`userEmoji`);
 
 // Chat room
@@ -1548,22 +1548,26 @@ async function whoAreYou() {
     await loadLocalStorage();
 
     if (!useVideo || !buttons.main.showVideoBtn) {
-        useVideo = false;
-        elemDisplay(document.getElementById('initVideo'), false);
-        elemDisplay(document.getElementById('initVideoBtn'), false);
-        elemDisplay(document.getElementById('initVideoMirrorBtn'), false);
-        elemDisplay(document.getElementById('initVideoSelect'), false);
-        elemDisplay(document.getElementById('tabVideoBtn'), false);
+        elemDisplay(getId('initVideo'), false);
+        elemDisplay(getId('initVideoBtn'), false);
+        elemDisplay(getId('initVideoMirrorBtn'), false);
+        elemDisplay(getId('initVideoSelect'), false);
+        if (!buttons.main.showVideoBtn) {
+            elemDisplay(getId('tabVideoBtn'), false);
+        }
+        // Disable camera settings, keep screen available
+        elemDisplay(getId('videoSourceDiv'), false);
+        elemDisplay(getId('videoFitDiv'), false);
+        elemDisplay(getId('videoFpsDiv'), false);
     }
     if (!useAudio || !buttons.main.showAudioBtn) {
-        //useAudio = false;
-        elemDisplay(document.getElementById('initAudioBtn'), false);
-        elemDisplay(document.getElementById('initMicrophoneSelect'), false);
-        elemDisplay(document.getElementById('initSpeakerSelect'), false);
-        elemDisplay(document.getElementById('tabAudioBtn'), false);
+        elemDisplay(getId('initAudioBtn'), false);
+        elemDisplay(getId('initMicrophoneSelect'), false);
+        elemDisplay(getId('initSpeakerSelect'), false);
+        elemDisplay(getId('tabAudioBtn'), false);
     }
     if (!buttons.main.showScreenBtn) {
-        elemDisplay(document.getElementById('initScreenShareBtn'), false);
+        elemDisplay(getId('initScreenShareBtn'), false);
     }
 
     initUser.classList.toggle('hidden');
@@ -5103,29 +5107,122 @@ function setCaptionRoomBtn() {
  * Set room emoji reaction button
  */
 function setRoomEmojiButton() {
+    // Map sound emojis to their shortcodes for sound playback
+    const soundEmojis = [
+        { emoji: '👍', shortcodes: ':+1:' },
+        { emoji: '👎', shortcodes: ':-1:' },
+        { emoji: '👌', shortcodes: ':ok_hand:' },
+        { emoji: '😀', shortcodes: ':grinning:' },
+        { emoji: '😃', shortcodes: ':smiley:' },
+        { emoji: '😂', shortcodes: ':joy:' },
+        { emoji: '😘', shortcodes: ':kissing_heart:' },
+        { emoji: '❤️', shortcodes: ':heart:' },
+        { emoji: '🎺', shortcodes: ':trumpet:' },
+        { emoji: '🎉', shortcodes: ':tada:' },
+        { emoji: '😮', shortcodes: ':open_mouth:' },
+        { emoji: '👏', shortcodes: ':clap:' },
+        { emoji: '✨', shortcodes: ':sparkles:' },
+        { emoji: '⭐', shortcodes: ':star:' },
+        { emoji: '🌟', shortcodes: ':star2:' },
+        { emoji: '💫', shortcodes: ':dizzy:' },
+        { emoji: '🚀', shortcodes: ':rocket:' },
+    ];
+
+    // Header with close button
+    const header = document.createElement('div');
+    header.className = 'room-emoji-header';
+
+    const title = document.createElement('span');
+    title.textContent = 'Emoji Picker';
+    title.className = 'room-emoji-title';
+
+    // Create a close button for the emoji picker
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'room-emoji-close-btn';
+    closeBtn.innerHTML = icons.close;
+
+    header.appendChild(title);
+    header.appendChild(closeBtn);
+
+    // Tabs (less invasive style)
+    const tabContainer = document.createElement('div');
+    tabContainer.className = 'room-emoji-tab-container';
+
+    const allTab = document.createElement('button');
+    allTab.textContent = 'All';
+    allTab.className = 'room-emoji-tab active';
+
+    const soundTab = document.createElement('button');
+    soundTab.textContent = 'Sounds';
+    soundTab.className = 'room-emoji-tab';
+
+    tabContainer.appendChild(allTab);
+    tabContainer.appendChild(soundTab);
+
+    // EmojiMart picker (default)
+    const emojiMartDiv = document.createElement('div');
+    emojiMartDiv.className = 'room-emoji-mart';
     const pickerRoomOptions = {
         theme: 'dark',
         onEmojiSelect: sendEmojiToRoom,
     };
-
     const emojiRoomPicker = new EmojiMart.Picker(pickerRoomOptions);
+    emojiMartDiv.appendChild(emojiRoomPicker);
 
-    emojiPickerContainer.appendChild(emojiRoomPicker);
+    // Custom sound emoji grid (6 per row, circular hover effect)
+    const emojiGrid = document.createElement('div');
+    emojiGrid.className = 'room-emoji-grid';
+
+    // Set grid layout only when visible
+    function showEmojiGrid() {
+        emojiGrid.classList.add('visible');
+    }
+    function hideEmojiGrid() {
+        emojiGrid.classList.remove('visible');
+    }
+
+    soundEmojis.forEach(({ emoji, shortcodes }) => {
+        const btn = document.createElement('button');
+        btn.textContent = emoji;
+        btn.className = 'room-emoji-btn';
+        btn.onclick = () => sendEmojiToRoom({ native: emoji, shortcodes });
+        emojiGrid.appendChild(btn);
+    });
+
+    // Tab switching
+    allTab.onclick = () => {
+        allTab.classList.add('active');
+        soundTab.classList.remove('active');
+        emojiMartDiv.style.display = 'block';
+        hideEmojiGrid();
+    };
+    soundTab.onclick = () => {
+        soundTab.classList.add('active');
+        allTab.classList.remove('active');
+        emojiMartDiv.style.display = 'none';
+        showEmojiGrid();
+    };
+
+    // Picker container
+    emojiPickerContainer.innerHTML = '';
+    emojiPickerContainer.appendChild(header);
+    emojiPickerContainer.appendChild(tabContainer);
+    emojiPickerContainer.appendChild(emojiMartDiv);
+    emojiPickerContainer.appendChild(emojiGrid);
     elemDisplay(emojiPickerContainer, false);
 
     if (!isMobileDevice) {
-        dragElement(emojiPickerContainer, emojiPickerHeader);
+        dragElement(emojiPickerContainer, header);
     }
 
     roomEmojiPickerBtn.addEventListener('click', (e) => {
         toggleEmojiPicker();
     });
-    closeEmojiPickerContainer.addEventListener('click', (e) => {
+    closeBtn.addEventListener('click', (e) => {
         toggleEmojiPicker();
     });
 
     function sendEmojiToRoom(data) {
-        console.log('Selected Emoji', data);
         const message = {
             type: 'roomEmoji',
             room_id: roomId,
@@ -5166,6 +5263,14 @@ function setChatEmojiBtn() {
     };
     const emojiPicker = new EmojiMart.Picker(pickerOptions);
     msgerEmojiPicker.appendChild(emojiPicker);
+
+    handleClickOutside(emojiPicker, msgerEmojiBtn, () => {
+        if (isChatEmojiVisible) {
+            elemDisplay(msgerEmojiPicker, false);
+            setColor(msgerEmojiBtn, '#FFFFFF');
+            isChatEmojiVisible = false;
+        }
+    });
 }
 
 /**
@@ -6090,6 +6195,12 @@ function handleUsernameEmojiPicker() {
         getId('usernameInput').value += data.native;
         toggleUsernameEmoji();
     }
+
+    handleClickOutside(emojiUsernamePicker, initUsernameEmojiButton, () => {
+        if (usernameEmoji && !usernameEmoji.classList.contains('hidden')) {
+            usernameEmoji.classList.add('hidden');
+        }
+    });
 }
 
 /**
@@ -6226,7 +6337,7 @@ async function setLocalMaxFps(maxFrameRate, type = 'camera') {
  * Set local video quality: https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints
  */
 async function setLocalVideoQuality() {
-    if (!useVideo || !localVideoMediaStream) return;
+    if (!localVideoMediaStream) return;
     const videoConstraints = await getVideoConstraints(videoQualitySelect.value ? videoQualitySelect.value : 'default');
     localVideoMediaStream
         .getVideoTracks()[0]
@@ -6291,8 +6402,7 @@ async function attachSinkId(element, sinkId) {
             } else {
                 errorMessage = `Error: ${err}`;
             }
-            console.error(errorMessage);
-            userLog('error', `attachSinkId: ${errorMessage}`);
+            console.error(`attachSinkId error: ${errorMessage}`);
             // Jump back to first output device in the list as it's the default.
             if (typeof audioOutputSelect !== 'undefined' && audioOutputSelect) {
                 audioOutputSelect.selectedIndex = 0;
@@ -6770,6 +6880,7 @@ async function toggleScreenSharing(init = false) {
             await stopLocalVideoTrack();
             await refreshMyLocalStream(screenMediaPromise, !useAudio);
             await refreshMyStreamToPeers(screenMediaPromise, !useAudio);
+            await setLocalVideoQuality();
 
             if (init) {
                 // Handle init media stream
@@ -6784,6 +6895,9 @@ async function toggleScreenSharing(init = false) {
                     disable(initVideoBtn, isScreenStreaming);
                 } else {
                     elemDisplay(initVideo, false);
+                }
+                if (!useVideo) {
+                    initVideoContainerShow(isScreenStreaming);
                 }
             }
 
@@ -11349,7 +11463,7 @@ function showAbout() {
     Swal.fire({
         background: swBg,
         position: 'center',
-        title: brand.about?.title && brand.about.title.trim() !== '' ? brand.about.title : 'WebRTC P2P v1.5.67',
+        title: brand.about?.title && brand.about.title.trim() !== '' ? brand.about.title : 'WebRTC P2P v1.5.79',
         imageUrl: brand.about?.imageUrl && brand.about.imageUrl.trim() !== '' ? brand.about.imageUrl : images.about,
         customClass: { image: 'img-about' },
         html: `
@@ -11915,6 +12029,29 @@ function sanitizeXSS(src) {
  */
 function disable(elem, disabled) {
     elem.disabled = disabled;
+}
+
+/**
+ * Handle click outside of an element
+ * @param {object} targetElement
+ * @param {object} triggerElement
+ * @param {function} callback
+ * @param {number} minWidth
+ */
+function handleClickOutside(targetElement, triggerElement, callback, minWidth = 0) {
+    document.addEventListener('click', (e) => {
+        if (minWidth && window.innerWidth > minWidth) return;
+        let el = e.target;
+        let shouldExclude = false;
+        while (el) {
+            if (el instanceof HTMLElement && (el === targetElement || el === triggerElement)) {
+                shouldExclude = true;
+                break;
+            }
+            el = el.parentElement;
+        }
+        if (!shouldExclude) callback();
+    });
 }
 
 /**

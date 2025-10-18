@@ -2737,9 +2737,8 @@ ul.pricing-item-features-list li {
 
 .clients-size-logo {
     width: 240px;
-    height: auto;
-    border-radius: 10px;
-    cursor: pointer;
+    height: 60px;
+    object-fit: contain;
 }
 
 .clients-size-logo:hover {
@@ -2748,6 +2747,7 @@ ul.pricing-item-features-list li {
 
 .clients-logo {
     display: flex;
+    cursor: pointer;
     justify-content: center;
     padding: 1rem;
     border-radius: 1rem;
@@ -3794,6 +3794,16 @@ img.has-shadow {
 /*--------------------------------------------------------------
 # Common
 --------------------------------------------------------------*/
+
+.blue {
+    font-weight: bold !important;
+    color: #00bfff !important;
+}
+
+.blue:hover {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
 
 .tac {
     text-align: center;

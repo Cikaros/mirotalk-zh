@@ -163,11 +163,7 @@
 
         <!-- Start room emoji picker -->
 
-        <div id="emojiPickerContainer" class="roomEmoji fadein">
-            <div id="emojiPickerHeader" class="emojiPickerHeader">
-                <button id="closeEmojiPickerContainer" class="fas fa-times"></button>
-            </div>
-        </div>
+        <div id="emojiPickerContainer" class="roomEmoji fadein"></div>
         <div id="userEmoji" class="userEmoji"></div>
 
         <!-- End room emoji picker -->
@@ -437,15 +433,15 @@
                     </div>
 
                     <div id="tabVideo" class="tabcontent">
-                        <div>
+                        <div id="videoSourceDiv">
                             <div class="title">
                                 <i class="fas fa-video"></i>
                                 <p>视频源</p>
                             </div>
                             <br />
                             <select id="videoSource"></select>
+                            <br />
                         </div>
-                        <br />
                         <div class="title">
                             <i class="fas fa-palette"></i>
                             <p>视频质量</p>
@@ -462,19 +458,21 @@
                             <option value="6kVideo">6K</option>
                             <option value="8kVideo">8K</option>
                         </select>
-                        <br />
-                        <div class="title">
-                            <i class="fa-solid fa-film"></i>
-                            <p>视频适应</p>
+                        <div id="videoFitDiv">
+                            <br />
+                            <div class="title">
+                                <i class="fa-solid fa-film"></i>
+                                <p>视频适应</p>
+                            </div>
+                            <br />
+                            <select id="videoObjFitSelect">
+                                <option value="fill">填充</option>
+                                <option value="contain">包含</option>
+                                <option value="cover">覆盖</option>
+                                <option value="scale-down">等比缩小</option>
+                                <option value="none">无</option>
+                            </select>
                         </div>
-                        <br />
-                        <select id="videoObjFitSelect">
-                            <option value="fill">填充</option>
-                            <option value="contain">包含</option>
-                            <option value="cover">覆盖</option>
-                            <option value="scale-down">等比缩小</option>
-                            <option value="none">无</option>
-                        </select>
                         <div id="videoFpsDiv">
                             <br />
                             <div class="title">

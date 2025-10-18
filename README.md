@@ -16,7 +16,7 @@ This project is proudly sponsored by
 
 <h1 align=center>Recall.ai - API for meeting recording</h1>
 <p align="center">
-    <a href="https://www.recall.ai">Recall.ai</a> – an API for recording Zoom, Google Meet, Microsoft Teams, and in-person meetings.
+    <a href="https://recall.ai/?utm_source=mirotalkp2p&utm_medium=sponsorship"><strong>Recall.ai</strong></a> – an API for recording Zoom, Google Meet, Microsoft Teams, and in-person meetings.
 </p>
 
 <hr />
@@ -337,7 +337,7 @@ These commands should now work correctly with the MiroTalk P2P
 </details>
 
 <details open>
-<summary>Hetzner, Hostinger & Contabo</summary>
+<summary>Hetzner, Netcup, Hostinger & Contabo</summary>
 
 <br/>
 
@@ -347,19 +347,32 @@ This application is running for `demonstration purposes` on [Hetzner](https://ww
 
 ---
 
-Use [my personal link](https://hetzner.cloud/?ref=XdRifCzCK3bn) to receive `€⁠20 IN CLOUD CREDITS`.
+👉 Use [my personal link](https://hetzner.cloud/?ref=XdRifCzCK3bn) to receive `€⁠20 IN CLOUD CREDITS`.
+
+---
+
+[![Netcup](public/sponsors/Netcup.png)](https://www.netcup.com/en/?ref=309627)
+
+Unlock `enterprise-grade performance` at a price you won’t believe.
+Scalable, reliable, and built for businesses that demand more.
+
+👉 [Power Meets Value with Netcup Root Server](https://www.netcup.com/en/?ref=309627)
 
 ---
 
 [![Hostinger](public/advertisers/HostingerLogo.png)](https://hostinger.com/?REFERRALCODE=MIROTALK)
 
-Fast, reliable hosting with 24/7 support and great performance. Start today! [Check out Hostinger now](https://hostinger.com/?REFERRALCODE=MIROTALK)
+Fast, reliable hosting with 24/7 support and great performance. Start today!
+
+👉 [Check out Hostinger now](https://hostinger.com/?REFERRALCODE=MIROTALK)
 
 ---
 
 [![Contabo](public/advertisers/ContaboLogo.png)](https://www.dpbolvw.net/click-101027391-14462707)
 
-Experience also top-tier German web hosting – dedicated servers, VPS, and web hosting at `unbeatable prices`. [Explore now here](https://www.dpbolvw.net/click-101027391-14462707)
+Experience also top-tier German web hosting – dedicated servers, VPS, and web hosting at `unbeatable prices`.
+
+👉 [Explore now here](https://www.dpbolvw.net/click-101027391-14462707)
 
 ---
 
@@ -438,11 +451,12 @@ To obtain a [MiroTalk P2P license](https://docs.mirotalk.com/license/licensing-o
 
 Do you find MiroTalk P2P indispensable for your needs? Join us in supporting this transformative project by [becoming a backer or sponsor](https://github.com/sponsors/miroslavpejic85). By doing so, not only will your logo prominently feature here, but you'll also drive the growth and sustainability of MiroTalk P2P. Your support is vital in ensuring that this valuable platform continues to thrive and remain accessible for all. Make an impact – back MiroTalk P2P today and be part of this exciting journey!
 
-|                                                                                |                                                                                        |                                                                                                                           |
-| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| [![BroadcastX](public/sponsors/BroadcastX.png)](https://broadcastx.de/)        | [![Hetzner](public/sponsors/HetznerLogo.png)](https://hetzner.cloud/?ref=XdRifCzCK3bn) | [![LuvLounge](public/sponsors/LuvLounge.png)](https://luvlounge.ca)                                                       |
-| [![QuestionPro](public/sponsors/QuestionPro.png)](https://www.questionpro.com) | [![BrowserStack](public/sponsors/BrowserStack.png)](https://www.browserstack.com)      | [![CrystalSound](public/sponsors/CrystalSound.png)](https://crystalsound.ai)                                              |
-| [![Cloudron](public/sponsors/Cloudron.png)](https://cloudron.io)               | [![Kiquix](public/sponsors/KiquixLogo.png)](https://kiquix.com)                        | [![LambdaTest](public/sponsors/LambdaTest.png)](https://lambdatest.com/pricing?coupon=QURFODlQUk9NT1RFUg==&refid=1149848) |
+|                                                                                   |                                                                                                                           |                                                                                |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [![EffectsSDK](public/sponsors/EffectsSDK.png)](https://effectssdk.ai/)           | [![Hetzner](public/sponsors/HetznerLogo.png)](https://hetzner.cloud/?ref=XdRifCzCK3bn)                                    | [![Netcup](public/sponsors/Netcup.png)](https://www.netcup.com/en/?ref=309627) |
+| [![BroadcastX](public/sponsors/BroadcastX.png)](https://broadcastx.de/)           | [![LuvLounge](public/sponsors/LuvLounge.png)](https://luvlounge.ca)                                                       | [![QuestionPro](public/sponsors/QuestionPro.png)](https://www.questionpro.com) |
+| [![BrowserStack](public/sponsors/BrowserStack.png)](https://www.browserstack.com) | [![CrystalSound](public/sponsors/CrystalSound.png)](https://crystalsound.ai)                                              | [![Cloudron](public/sponsors/Cloudron.png)](https://cloudron.io)               |
+| [![Kiquix](public/sponsors/KiquixLogo.png)](https://kiquix.com)                   | [![LambdaTest](public/sponsors/LambdaTest.png)](https://lambdatest.com/pricing?coupon=QURFODlQUk9NT1RFUg==&refid=1149848) |                                                                                |
 
 </details>
 
@@ -458,6 +472,20 @@ Do you find MiroTalk P2P indispensable for your needs? Join us in supporting thi
 ---
 
 </details>
+
+## EffectsSDK ✨
+
+[![EffectsSDK](public/sponsors/EffectsSDK.png)](https://effectssdk.ai/)
+
+`Enhance your video conferencing` experience with `advanced virtual backgrounds` and `noise suppression`. EffectsSDK offers powerful SDKs and plugins for fast integration.
+
+**Explore:**
+
+- 🎥 **[AI Video Effects Extension](https://chromewebstore.google.com/detail/effetti-webcam-ai-+-regis/iedbphhbpflhgpihkcceocomcdnemcbj)** – Add virtual backgrounds and effects to your webcam.
+- 🔊 **[Noise Cancelling Extension](https://chromewebstore.google.com/detail/noise-cancelling-app/njmhcidcdbaannpafjdljminaigdgolj)** – Reduce background noise for clearer audio.
+- 🛠️ **[Integrate EffectsSDK](https://github.com/EffectsSDK)** – Access SDKs and plugins for custom solutions.
+
+---
 
 ## Diving into Additional MiroTalk Projects:
 
