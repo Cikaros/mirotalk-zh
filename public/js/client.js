@@ -3170,7 +3170,7 @@ function detectBluetoothHeadset(init = false) {
     const lowQualityBT = /(bluetooth|headset|hands[- ]?free|hsp|hfp|sco|airpods)/i;
     if (micName && lowQualityBT.test(micName)) {
         alert(
-            "⚠️ You're using a Bluetooth headset with limited audio quality. For best results, use your device's built-in microphone or a wired headset."
+            "⚠️ 您正在使用音频质量有限的蓝牙耳机。为了获得最佳效果，请使用设备内置的麦克风或有线耳机。"
         );
     }
 }
