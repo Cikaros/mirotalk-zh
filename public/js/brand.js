@@ -75,7 +75,7 @@ let brand = {
     },
     about: {
         imageUrl: '../images/mirotalk-logo.gif',
-        title: 'WebRTC P2P v1.5.79',
+        title: 'WebRTC P2P v1.6.07',
         html: `
             <button 
                 id="support-button" 
@@ -124,12 +124,12 @@ let brand = {
             checkOnlineStatus: false,
             isOnline: true,
             customMessages: {
-                heading: 'Need Help?',
-                subheading: 'Get instant support from our expert team!',
-                connectText: 'connect in < 5 seconds',
-                onlineText: 'We are online',
-                offlineText: 'We are offline',
-                poweredBy: 'Powered by MiroTalk',
+                heading: '需要帮助？',
+                subheading: '从我们的专家团队获得即时支持！',
+                connectText: '在 < 5 秒内连接',
+                onlineText: '支持在线',
+                offlineText: '支持离线',
+                poweredBy: '由 MiroTalk 提供技术支持',
             },
         },
     },
